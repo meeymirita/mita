@@ -41,10 +41,17 @@ done
 if [ ! -d /var/www/html/vendor ] || [ ! -f /var/www/html/vendor/autoload.php ]; then
     composer install --no-dev --optimize-autoloader
 fi
-
 php artisan storage:link
 php artisan key:generate
+
 php artisan migrate --force
+# создание очередей
+php artisan mirita:queue-for-rabbitmq
+
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 # Запускаем Supervisord
 exec "$@"
