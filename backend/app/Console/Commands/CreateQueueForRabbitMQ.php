@@ -26,6 +26,7 @@ class CreateQueueForRabbitMQ extends Command
     /**
      * @return void
      * @throws \Exception
+     * Документация http://localhost:15672/api/index.html
      */
     public function handle()
     {

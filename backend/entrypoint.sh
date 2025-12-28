@@ -47,11 +47,7 @@ php artisan key:generate
 php artisan migrate --force
 # создание очередей
 php artisan mirita:queue-for-rabbitmq
-
-php artisan optimize:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan mirita:my-optimize
 
 # Запускаем Supervisord
 exec "$@"
