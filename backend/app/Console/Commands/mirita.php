@@ -11,14 +11,14 @@ class mirita extends Command
      *
      * @var string
      */
-    protected $signature = 'mirita';
+    protected $signature = 'mirita:my-optimize';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Сразу всё что есть (cache,view,route,config,optimize,config,route,optimize)';
 
     /**
      * Execute the console command.

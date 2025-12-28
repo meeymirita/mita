@@ -9,12 +9,6 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    /*
-    |--------------------------------------------------------------------------
-    | Default Queue Connection Name
-    |--------------------------------------------------------------------------
-    */
-
     'default' => env('RABBITMQ_QUEUE', 'laravel_queue'),
 
     /*
@@ -26,15 +20,15 @@ return [
     'connections' => [
         'default' => [
             // Домен контейнера
-            'host' => env('RABBITMQ_HOST', 'rabbitmq'),
+            'host' => env('RABBITMQ_HOST'),
             // Порт RabbitMQ
-            'port' => env('RABBITMQ_PORT', 5672),
+            'port' => env('RABBITMQ_PORT'),
             // Логин
-            'user' => env('RABBITMQ_USER', 'admin'),
+            'user' => env('RABBITMQ_USER'),
             // Пароль
-            'password' => env('RABBITMQ_PASSWORD', 'secret'),
+            'password' => env('RABBITMQ_PASSWORD'),
             // Виртуальный хост
-            'vhost' => env('RABBITMQ_VHOST', '/'),
+            'vhost' => env('RABBITMQ_VHOST'),
         ],
 
     ],
@@ -45,15 +39,7 @@ return [
     */
     'queues' => [
         // Основная очередь
-        'default' => env('RABBITMQ_QUEUE', 'laravel_queue'),
-        // очереди под посты
-        'post_created' => 'post_created',
-        'post_updated' => 'post_updated',
-        'post_deleted' => 'post_deleted',
-
-
-        'notifications' => 'notifications_queue',
-        'emails' => 'emails_queue',
+        'laravel_queue' => env('RABBITMQ_QUEUE', 'laravel_queue'),
     ],
 
     /*

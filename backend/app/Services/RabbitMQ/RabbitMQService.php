@@ -55,39 +55,14 @@ class RabbitMQService
 
             $this->channel = $this->connection->channel();
 
-            Log::info('✅ RabbitMQ connected successfully');
+            Log::info('✅');
 
         } catch (\Exception $e) {
-            Log::error('❌ RabbitMQ connection failed: ' . $e->getMessage());
+            Log::error('❌' . $e->getMessage());
             throw $e;
         }
     }
 
-    /**
-     * Специальные методы для постов
-     */
-    public function publishPostCreated(array $postData)
-    {
-        return $this->publish('post_created', $postData, 'post_created');
-    }
-
-    /**
-     * @param array $postData
-     * @return bool
-     */
-    public function publishPostUpdated(array $postData)
-    {
-        return $this->publish('post_updated', $postData, 'post_updated');
-    }
-
-    /**
-     * @param array $postData
-     * @return bool
-     */
-    public function publishPostDeleted(array $postData)
-    {
-        return $this->publish('post_deleted', $postData, 'post_deleted');
-    }
 
     /*
     |--------------------------------------------------------------------------
@@ -110,12 +85,6 @@ class RabbitMQService
     |
     | Отправка в очередь
     |    $this->channel->basic_publish($amqpMessage, '', $queueName);
-    |
-    |
-    |
-    |
-    |
-    |
     |--------------------------------------------------------------------------
     */
     /**

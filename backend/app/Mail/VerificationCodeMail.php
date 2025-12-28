@@ -54,12 +54,11 @@ class VerificationCodeMail extends Mailable
     }
     private function determineBaseUrl(): string
     {
-        // Если мы в консоли (очередь, команда)
+        // Если мы в консоли, очередь, команда
         if (app()->runningInConsole()) {
             return config('app.url') ?: 'http://82.202.143.65';
         }
-
-        // Иначе берем из текущего запроса (с портом!)
+        // Иначе берем из текущего запроса с портом
         return request()->getSchemeAndHttpHost();
     }
     /**

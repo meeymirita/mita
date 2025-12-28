@@ -59,6 +59,10 @@ class AuthService
     }
 
 
+    /**
+     * @param string $login
+     * @return string
+     */
     private function checkFieldType(string $login)
     {
         return filter_var($login, FILTER_VALIDATE_EMAIL)

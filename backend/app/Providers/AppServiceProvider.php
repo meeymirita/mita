@@ -20,10 +20,6 @@ class AppServiceProvider extends ServiceProvider
             UserCreateInterface::class,
             UserCreateService::class
         );
-        $this->app->bind(
-            PostInterface::class,
-            PostService::class
-        );
     }
 
     public function boot(): void
