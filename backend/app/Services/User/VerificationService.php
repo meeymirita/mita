@@ -3,10 +3,7 @@
 namespace App\Services\User;
 
 use App\Events\VerificationCodeMailEvent;
-use App\Mail\VerificationCodeMail;
 use App\Models\User;
-use App\Traits\ColoredLogs;
-use Illuminate\Support\Facades\Mail;
 use Random\RandomException;
 
 class VerificationService
