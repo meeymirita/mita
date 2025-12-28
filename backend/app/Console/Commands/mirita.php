@@ -37,8 +37,6 @@ class mirita extends Command
         $this->call('route:cache');
         $this->call('optimize');
 
-        $this->call('migrate:fresh');
-
         return Command::SUCCESS;
     }
 }

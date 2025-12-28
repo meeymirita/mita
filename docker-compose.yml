@@ -127,7 +127,7 @@ services:
       DB_USERNAME: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
 
-      REDIS_HOST: redis-db
+      REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: 6379
       REDIS_CLIENT: predis

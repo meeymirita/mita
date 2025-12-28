@@ -3,7 +3,6 @@ set -e
 
 echo "🔄 Настройка Laravel приложения..."
 
-# ========== ВЫБОР ПРАВИЛЬНОГО SUPERVISORD КОНФИГА ==========
 if [ "$APP_ENV" = "production" ]; then
     if [ -f /var/www/html/docker/supervisord.prod.conf ]; then
         cp /var/www/html/docker/supervisord.prod.conf /etc/supervisor/conf.d/supervisord.conf
@@ -14,7 +13,7 @@ else
     cp /var/www/html/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 fi
 
-echo "✅ Supervisord конфиг  $APP_ENV"
+echo "Supervisord конфиг $APP_ENV"
 
 mkdir -p /var/www/html/storage/framework/{sessions,views,cache}
 mkdir -p /var/www/html/bootstrap/cache
