@@ -56,38 +56,38 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 //        ->name('password.reset');
 });
 // 123
-Route::prefix('posts')->name('posts.')->group(function () {
-    // все посты на главную
-    Route::get('/', [PostController::class, 'index'])->name('index');
-    // посмотреть пост
-    Route::get('/{post}', [PostController::class, 'show'])->name('show');
-    // действия с постами авторизованного пользователя
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/', [PostController::class, 'store'])->name('store');
-        Route::put('/{post}', [PostController::class, 'update'])->name('update');
-        Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
-    });
-    // имаге в ресурс для отдачи в другой ресурс
-    Route::get('/images/{image}/view', [ImageController::class, 'view'])->name('images.view');
-    Route::get('/images/{image}/download', [ImageController::class, 'download'])->name('images.download');
-});
-Route::get('/check', function () {
-    return response()->json([
-        'authenticated' => Auth::check(),
-        'user' => Auth::user()
-    ]);
-})->middleware('auth:sanctum');
-//  auth:sanctum и verified -> и если толька почта подтверждена
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/profile', function () {
-        // resolve удаляет data {}
-        return (new UserResource(auth()->user()))->resolve();
-    });
-
-    Route::get('/dashboard', function () {
-        return response()->json(['message' => 'Dashboard data']);
-    });
-});
+//Route::prefix('posts')->name('posts.')->group(function () {
+//    // все посты на главную
+//    Route::get('/', [PostController::class, 'index'])->name('index');
+//    // посмотреть пост
+//    Route::get('/{post}', [PostController::class, 'show'])->name('show');
+//    // действия с постами авторизованного пользователя
+//    Route::middleware('auth:sanctum')->group(function () {
+//        Route::post('/', [PostController::class, 'store'])->name('store');
+//        Route::put('/{post}', [PostController::class, 'update'])->name('update');
+//        Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
+//    });
+//    // имаге в ресурс для отдачи в другой ресурс
+//    Route::get('/images/{image}/view', [ImageController::class, 'view'])->name('images.view');
+//    Route::get('/images/{image}/download', [ImageController::class, 'download'])->name('images.download');
+//});
+//Route::get('/check', function () {
+//    return response()->json([
+//        'authenticated' => Auth::check(),
+//        'user' => Auth::user()
+//    ]);
+//})->middleware('auth:sanctum');
+////  auth:sanctum и verified -> и если толька почта подтверждена
+//Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+//    Route::get('/profile', function () {
+//        // resolve удаляет data {}
+//        return (new UserResource(auth()->user()))->resolve();
+//    });
+//
+//    Route::get('/dashboard', function () {
+//        return response()->json(['message' => 'Dashboard data']);
+//    });
+//});
 
 
 // тест
@@ -102,7 +102,6 @@ Route::get('/debug-email-urls', function () {
         'scheme_and_host' => request()->getSchemeAndHttpHost(),
         'root' => url(''),
 
-        // Что использует Laravel для генерации URL в письмах
         'asset_url_himary' => asset('storage/images/himary.jpg'),
         'url_himary' => url('storage/images/himary.jpg'),
     ];
@@ -120,12 +119,8 @@ Route::get('/test-email', function () {
     }
 
     $mail = new \App\Mail\VerificationCodeMail($user, '123456');
-
-    // Предпросмотр
     return $mail->render();
 });
-// Добавьте этот маршрут в routes/api.php
-// routes/web.php или routes/api.php
 Route::get('/show-image', function () {
     $path = storage_path('app/public/images/himary.jpg');
 
@@ -149,7 +144,7 @@ Route::get('/test-path', function() {
         });
 
         return response()->json([
-            'storage_path' => storage_path('app/public/images/himary.jpg'), // Базовый путь storage
+            'storage_path' => storage_path('app/public/images/himary.jpg'),
             'app_path' => app_path(),         // Путь к app/
             'public_path' => public_path(),   // Путь к public/
             'base_path' => base_path(),       // Корень проекта
@@ -165,7 +160,6 @@ Route::get('/test-queueqqq', function() {
         return 'No users found';
     }
     $q = config('rabbitmq.queues.emails');
-    // Запускаем несколько заданий
     for ($i = 0; $i < 111; $i++) {
         App\Events\VerificationCodeMailEvent::dispatch(
             $user, 123, $q
@@ -184,29 +178,6 @@ Route::get('/check-image-path', function () {
 
     return response()->json($paths);
 });
-Route::get('/test-rabbitmq', function () {
-    \App\Jobs\TestRabbitMQJob::dispatch('Hello RabbitMQ!');
-    return response()->json(['message' => 'Job dispatched to RabbitMQ']);
-});
-Route::get('/test-queue', function () {
-    $post = \App\Models\Post::first();
-
-    if (!$post) {
-        return response()->json(['error' => 'No posts found'], 404);
-    }
-
-    \App\Jobs\ProcessPostJob::dispatch(
-        action: 'post_created',
-        data: $post,
-        queue: 'post_created'
-    );
-
-    return response()->json([
-        'message' => 'Test job dispatched',
-        'post_id' => $post->id,
-        'queue' => 'post_created'
-    ]);
-});
 Route::get('/check-queue-config', function () {
     return [
         'default_connection' => config('queue.default'),
@@ -218,17 +189,6 @@ Route::get('/check-queue-config', function () {
         ],
         'available_queues' => config('rabbitmq.queues', ['high', 'default', 'low'])
     ];
-});
-Route::get('/test-queues', function () {
-    // разные очереди
-    \App\Jobs\TestQueueJob::dispatch('High priority task', 'high');
-    \App\Jobs\TestQueueJob::dispatch('Default priority task', 'default');
-    \App\Jobs\TestQueueJob::dispatch('Low priority task', 'low');
-
-    return response()->json([
-        'message' => 'Test jobs dispatched to different queues',
-        'queues' => ['high', 'default', 'low']
-    ]);
 });
 Route::get('/test-mail', function () {
     try {
