@@ -91,6 +91,7 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 
 
 // тест
+// тест
 Route::get('/test', function () {
     return 'asd';
 });
