@@ -12,12 +12,12 @@ jobs:
 
       - name: Check backend PHP syntax
         run: |
-          cd backend
+          cd ./backend
           find . -name "*.php" -exec php -l {} \;
 
       - name: Check frontend syntax
         run: |
-          cd frontend
+          cd ./frontend
           npm ci
           npm run lint || echo "Lint completed"
 
