@@ -1,114 +1,18 @@
-name: Backend CI
-
-on:
-  push:
-    branches: [ main, develop ]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/**'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'backend/**'
-
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
 jobs:
-  backend-ci:
+  Explore-GitHub-Actions:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: test_db
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          - 3306:3306
-
-      redis:
-        image: redis:alpine
-        options: >-
-          --health-cmd="redis-cli ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          - 6379:6379
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, mysqli, gd, exif, zip, redis
-          coverage: none
-          tools: composer
-
-      - name: Validate composer.json
-        run: composer validate --strict
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Check PHP syntax
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v5
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
         run: |
-          # Проверка синтаксиса всех PHP файлов
-          find . -name "*.php" -exec php -l {} \;
-          echo "✅ Все PHP файлы синтаксически корректны"
-
-      - name: Copy environment file
-        run: |
-          cp .env.example .env.testing
-          echo "APP_ENV=testing" >> .env.testing
-          echo "DB_CONNECTION=mysql" >> .env.testing
-          echo "DB_HOST=127.0.0.1" >> .env.testing
-          echo "DB_PORT=3306" >> .env.testing
-          echo "DB_DATABASE=test_db" >> .env.testing
-          echo "DB_USERNAME=root" >> .env.testing
-          echo "DB_PASSWORD=password" >> .env.testing
-          echo "REDIS_HOST=127.0.0.1" >> .env.testing
-          echo "REDIS_PORT=6379" >> .env.testing
-          echo "QUEUE_CONNECTION=sync" >> .env.testing
-
-      - name: Generate application key
-        run: php artisan key:generate --env=testing
-
-      - name: Run migrations
-        run: php artisan migrate --env=testing --force
-
-      - name: Run tests
-        run: vendor/bin/phpunit --testdox
-
-      - name: Run Laravel Pint (если используется)
-        run: |
-          if [ -f vendor/bin/pint ]; then
-            vendor/bin/pint --test
-          else
-            echo "Laravel Pint не установлен"
-          fi
-
-      - name: Check code style with PHP CS Fixer (опционально)
-        run: |
-          if [ -f vendor/bin/php-cs-fixer ]; then
-            vendor/bin/php-cs-fixer fix --dry-run --diff
-          fi
-
-      - name: Security check with PHP Security Checker
-        uses: symfonycorp/security-checker-action@v4
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
