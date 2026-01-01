@@ -122,7 +122,4 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-    'frontend_url_local' => env('APP_FRONTEND_LOCAL_URL', 'http://localhost:3000', ''),
-    'frontend_url_production' => env('APP_FRONTEND_PRODUCTION_URL', 'https://meeymirita.ru', ''),
-
 ];

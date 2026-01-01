@@ -29,6 +29,12 @@ Route::prefix('user')->name('user.')->group(callback: function () {
         ->middleware(['auth:sanctum'])
         ->name('logout');
 
+    Route::post( '/me', function (){
+
+        return new UserResource(auth()->user());
+    })->middleware(['auth:sanctum']);
+
+
 //    /*
 //     * Отдаёт текущего пользователя с его постами пагинация на 10 постов
 //     */
@@ -93,6 +99,9 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 // тест
 // тест
 // Тестовый роут для проверки очереди
+Route::get('/get_user/{id}', function ($id) {
+    return Cache::get("users:user_{$id}");
+});
 Route::get('/test-queue-mass', function() {
     \Log::info('=== НАЧАЛО массовой отправки в очередь ===');
 
