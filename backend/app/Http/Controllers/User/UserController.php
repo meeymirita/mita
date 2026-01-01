@@ -2,27 +2,38 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Contracts\UserCreateInterface;
+use App\Contracts\User\AuthUserInterface;
+use App\Contracts\User\UserCreateInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\User\LoginResponseResource;
 use App\Http\Resources\User\RegisterResponseResource;
-use App\Services\User\AuthService;
+use App\Http\Resources\User\UserResource;
+use App\Services\User\UpdateService;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+
 class UserController extends Controller
 {
     public UserCreateInterface $userCreate;
-    public AuthService $authService;
+    public AuthUserInterface $authService;
+    public UpdateService $updateService;
 
     public function __construct(
         UserCreateInterface $userCreate,
-        AuthService         $authService
+
+        AuthUserInterface   $authService,
+
+        UpdateService       $updateService
     )
     {
         $this->userCreate = $userCreate;
+
         $this->authService = $authService;
+
+        $this->updateService = $updateService;
     }
 
     public function register(CreateUserRequest $request)
@@ -37,16 +48,14 @@ class UserController extends Controller
 
     public function login(Request $request): JsonResponse
     {
+        \Log::alert('qwe');
         try {
             $data = $this->authService->login($request->all());
-
             return response()->json([
                 'success' => true,
                 'message' => 'Авторизация успешна',
                 'data' => new LoginResponseResource($data)
             ], 200);
-
-
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -71,34 +80,24 @@ class UserController extends Controller
         ]);
     }
 
+    public function update(UpdateUserRequest $request): JsonResponse
+    {
+        $user = auth()->user();
+        // UserServiceProvider
+        if (!$user->can('update', $user)) {
+            return response()->json([
+                'message' => 'У вас нет прав для обновления профиля'
+            ], 403);
+        }
+        $data = $request->validated();
+        $user->update($data);
+        return response()->json([
+            'message' => 'Данные успешно обновлены',
+            'user' => new UserResource($user->fresh()) // fresh сам обновит
+        ], 200);
+    }
 }
-//
-//public function login(Request $request): JsonResponse
-//{
-//    try {
-//        $data = $this->userLoginService->login($request->all());
-//
-//        return response()->json([
-//            'success' => true,
-//            'message' => 'Авторизация успешна',
-//            'data' => new LoginResponseResource($data)
-//        ], 200);
-//
-//
-//    } catch (ValidationException $e) {
-//        return response()->json([
-//            'success' => false,
-//            'message' => 'Ошибки валидации',
-//            'errors' => $e->errors()
-//        ], 422);
-//    } catch (\Exception $e) {
-//        return response()->json([
-//            'success' => false,
-//            'message' => 'Ошибка сервера',
-//            'error' => $e->getMessage() ?: null
-//        ], 500);
-//    }
-//}
+
 //
 //public function update(UpdateUserRequest $request): JsonResponse
 //{

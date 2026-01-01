@@ -3,34 +3,30 @@
 namespace App\Services\User;
 
 
-use App\Contracts\UserCreateInterface;
+use App\Contracts\User\AuthUserInterface;
 use App\Enums\UserCheckLoginField;
-use App\Enums\UserStatus;
-use App\Enums\UserType;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class AuthService
+class AuthService implements AuthUserInterface
 {
     /**
-     * @param array $credentials
+     * @param array $userData
      * @return array
      */
-    public function login(array $credentials): array
+    public function login(array $userData): array
     {
         // валидация,
-        $this->validateCredentials($credentials);
+        $this->validateCredentials($userData);
         // проверка это логин или почта
-        $fieldType = $this->checkFieldType($credentials['login']);
+        $fieldType = $this->checkFieldType($userData['login']);
         // поиск юзера
-        $user = $this->findUser($fieldType, $credentials['login']);
+        $user = $this->findUser($fieldType, $userData['login']);
         // роверка пароля
-        $this->validatePassword($credentials['password'], $user);
+        $this->validatePassword($userData['password'], $user);
         // авториазция
         Auth::login($user);
 
