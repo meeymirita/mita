@@ -37,29 +37,33 @@ class VerificationCodeMail extends Mailable
      */
     public function content(): Content
     {
-        // http://localhost:8080/storage/images/himary.jpg
-        // http://localhost:8080/storage/images/sakura.jpg
-//        \Log::info(url('storage/images/himary.jpg'));
-        $baseUrl = $this->determineBaseUrl();
         return new Content(
             view: 'emails.verification',
             with: [
                 'user' => $this->user,
                 'code' => $this->code,
                 'frontend_url' => 'https://meeymirita.ru/',
-                'himary_url' => $baseUrl . '/storage/images/himary.jpg',
-                'sakura_url' => $baseUrl . '/storage/images/sakura.jpg',
+                'himary_url' => $this->getImageToEmail('sakura.png'),
+                'sakura_url' => $this->getImageToEmail('sakura.png'),
             ]
         );
     }
+
+    /**
+     * @return string
+     */
     private function determineBaseUrl(): string
     {
-        // Если мы в консоли, очередь, команда
-        if (app()->runningInConsole()) {
-            return config('app.url') ?: 'http://82.202.143.65';
-        }
-        // Иначе берем из текущего запроса с портом
         return request()->getSchemeAndHttpHost();
+    }
+
+    /**
+     * @param string $image
+     * @return string
+     */
+    public function getImageToEmail(string $image): string
+    {
+        return $this->determineBaseUrl() . "/storage/images/image_to_email/{$image}";
     }
     /**
      * Get the attachments for the message.

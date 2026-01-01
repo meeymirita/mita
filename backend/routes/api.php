@@ -114,13 +114,12 @@ Route::get('/test-email', function () {
 
     if (!$user) {
         $user = \App\Models\User::create([
-            'email' => 'test@example.com',
+            'email' => 'tesйцуt@example.com',
             'password' => bcrypt('password'),
         ]);
     }
 
-    $mail = new \App\Mail\VerificationCodeMail($user, '123456');
-    return $mail->render();
+    return (new \App\Mail\VerificationCodeMail($user, '123156'))->render();
 });
 Route::get('/show-image', function () {
     $path = storage_path('app/public/images/himary.jpg');
@@ -132,22 +131,22 @@ Route::get('/show-image', function () {
 });
 Route::get('/test-path', function() {
     try {
-        \Mail::raw('Тестовое письмо из Laravel', function ($message) {
-            $email = 'nik.lyamkin@yandex.ru';
-            //роверил в сообщения так ставить storage_path('app/public/me.jpg')
-            // Attachment::fromPath из доки https://laravel.com/docs/12.x/mail
-            $attachment = Attachment::fromPath(public_path('himary.jpg'));
-            // к меседжу
-            $message->attach($attachment);
-
-            $message->to($email)
-                ->subject('Тест отправки почты');
-        });
+//        \Mail::raw('Тестовое письмо из Laravel', function ($message) {
+//            $email = 'nik.lyamkin@yandex.ru';
+//            //роверил в сообщения так ставить storage_path('app/public/me.jpg')
+//            // Attachment::fromPath из доки https://laravel.com/docs/12.x/mail
+//            $attachment = Attachment::fromPath(public_path('himary.jpg'));
+//            // к меседжу
+//            $message->attach($attachment);
+//
+//            $message->to($email)
+//                ->subject('Тест отправки почты');
+//        });
 
         return response()->json([
-            'storage_path' => storage_path('app/public/images/himary.jpg'),
+            'storage_path' => storage_path('sakura.png'),
             'app_path' => app_path(),         // Путь к app/
-            'public_path' => public_path(),   // Путь к public/
+            'public_path' => public_path(storage_path('sakura.png')),   // Путь к public/
             'base_path' => base_path(),       // Корень проекта
         ]);
     } catch (\Exception $e) {

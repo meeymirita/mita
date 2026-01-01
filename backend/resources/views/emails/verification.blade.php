@@ -123,7 +123,7 @@
     </p>
 
     <div class="code-container" style="background-image: url('{{ $sakura_url }}');">
-        <h1 style="color: #ffffff; letter-spacing: 5px; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);" class="verification-code">{{ $code }}</h1>
+        <h1 style="color: #56256e; letter-spacing: 5px; margin: 0; text-shadow: 2px 2px 4px rgb(197 10 10 / 50%);" class="verification-code">{{ $code }}</h1>
         <p class="expiry" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Код действителен 30 минут</p>
     </div>
 
@@ -133,7 +133,7 @@
         <p class="instruction">Этот момент — сейчас. Добро пожаловать туда,
             где начинаются настоящие связи.</p>
     </div>
-    <p class="instruction">Теперь это мы с тобой! 👉👈</p>
+    <p class="instruction">Быстрее вводи код! 👉👈</p>
 
     <div class="himary" style="background-image: url('{{ $himary_url }}');"></div>
 
