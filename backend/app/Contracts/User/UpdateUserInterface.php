@@ -4,5 +4,9 @@ namespace App\Contracts\User;
 
 interface UpdateUserInterface
 {
-    public function login(array $userData);
+    /**
+     * @param array $userData
+     * @return mixed
+     */
+    public function update(array $userData);
 }

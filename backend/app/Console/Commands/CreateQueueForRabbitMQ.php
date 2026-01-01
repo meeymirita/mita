@@ -91,7 +91,7 @@ class CreateQueueForRabbitMQ extends Command
 
             $channel->close();
             $connection->close();
-            \Log::info('norm');
+            \Log::info('созданы или обновлены очереди');
         } catch (\Exception $exception) {
             \Log::error($exception->getMessage());
         }

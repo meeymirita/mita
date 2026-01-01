@@ -50,20 +50,9 @@ class VerificationCodeMailListener implements ShouldQueue
     {
         sleep(25);
 
-        Log::info('VerificationCodeMailEvent обработка', [
-            'user_id' => $event->user->id,
-            'email' => $event->user->email,
-            'code' => $event->code,
-        ]);
-
         try {
             Mail::to($event->user->email)
                 ->send(new VerificationCodeMail($event->user, $event->code));
-
-            Log::info('Email отправлен успешно', [
-                'user_id' => $event->user->id,
-                'email' => $event->user->email,
-            ]);
             if ($this->job) {
                 // Ручное подтверждение успешной обработки
                 $this->job->delete();

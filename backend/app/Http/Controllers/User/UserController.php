@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Contracts\User\AuthUserInterface;
+use App\Contracts\User\UpdateUserInterface;
 use App\Contracts\User\UserCreateInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateUserRequest;
@@ -23,16 +24,12 @@ class UserController extends Controller
 
     public function __construct(
         UserCreateInterface $userCreate,
-
         AuthUserInterface   $authService,
-
-        UpdateService       $updateService
+        UpdateUserInterface $updateService
     )
     {
         $this->userCreate = $userCreate;
-
         $this->authService = $authService;
-
         $this->updateService = $updateService;
     }
 
@@ -48,7 +45,6 @@ class UserController extends Controller
 
     public function login(Request $request): JsonResponse
     {
-        \Log::alert('qwe');
         try {
             $data = $this->authService->login($request->all());
             return response()->json([
@@ -80,21 +76,13 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(UpdateUserRequest $request): JsonResponse
+    /**
+     * @param UpdateUserRequest $request
+     * @return UserResource
+     */
+    public function update(UpdateUserRequest $request): UserResource
     {
-        $user = auth()->user();
-        // UserServiceProvider
-        if (!$user->can('update', $user)) {
-            return response()->json([
-                'message' => 'У вас нет прав для обновления профиля'
-            ], 403);
-        }
-        $data = $request->validated();
-        $user->update($data);
-        return response()->json([
-            'message' => 'Данные успешно обновлены',
-            'user' => new UserResource($user->fresh()) // fresh сам обновит
-        ], 200);
+        return UserResource::make($this->updateService->update($request->validated()));
     }
 }
 

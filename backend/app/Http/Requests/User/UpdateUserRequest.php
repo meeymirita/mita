@@ -24,13 +24,23 @@ class UpdateUserRequest extends FormRequest
     {
         $userId = auth()->id();
         return [
-            'name' => 'nullable|string|max:255|min:3|regex:/^[a-zA-Zа-яА-ЯёЁ\s\-]+$/u',
+            'name' => 'nullable|string|max:255|min:3|regex:/^[a-zA-Zа-яА-ЯёЁ\s\-]+$/u|unique:users,name,' . $userId,
             'login' => ['nullable', 'string', 'max:255', 'min:3', 'alpha_dash',
                 Rule::unique('users', 'login')->ignore($userId),
             ],
-            'email' => ['required', 'email:rfc,dns', 'max:255',
+            'email' => ['nullable', 'email:rfc,dns', 'max:255',
                 Rule::unique('users', 'email')->ignore($userId),
             ],
+        ];
+    }
+
+
+    public function messages(): array
+    {
+        return [
+            'name.unique' => 'Такое имя уже существует',
+            'login.unique' => 'Такой логин уже существует',
+            'email.unique' => 'Такой email уже существует'
         ];
     }
 }
