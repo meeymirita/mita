@@ -5,17 +5,19 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\User\VerificationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class VerifyEmailController extends Controller
 {
     public function __construct(
         private VerificationService $verificationService
-    )
-    {
-    }
-
-    public function verify(Request $request)
+    ){}
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function verify(Request $request): JsonResponse
     {
         $request->validate([
             'email' => 'required|email|exists:users,email',

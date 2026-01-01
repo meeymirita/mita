@@ -100,23 +100,6 @@ class UserController extends Controller
 }
 
 //
-//public function update(UpdateUserRequest $request): JsonResponse
-//{
-//    $user = auth()->user();
-//    // UserServiceProvider
-//    if (!$user->can('update', $user)) {
-//        return response()->json([
-//            'message' => 'У вас нет прав для обновления профиля'
-//        ], 403);
-//    }
-//    $data = $request->validated();
-//    $user->update($data);
-//    return response()->json([
-//        'message' => 'Данные успешно обновлены',
-//        'user' => new UserResource($user->fresh()) // свежие данные из БД
-//    ], 200);
-//}
-//
 //public function sendResetLink(Request $request)
 //{
 //    $request->validate(['email' => 'required|email']);

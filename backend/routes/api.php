@@ -1,15 +1,17 @@
 <?php
+
+use App\Http\Controllers\User\ResetPasswordController;
 use App\Http\Controllers\User\SendVerificationCodeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\VerifyEmailController;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Support\Facades\Route;
-use Predis\Response\Status;
+
 //  без защиты
 Route::prefix('user')->name('user.')->group(callback: function () {
     //ругистрация с отправкой письма на почту для подтверждения её
-    Route::post( '/register', action: [UserController::class, 'register'])
+    Route::post('/register', action: [UserController::class, 'register'])
         ->name('register');
     // Подтверждение email
     Route::post('/verify-email', [VerifyEmailController::class, 'verify'])
@@ -27,12 +29,18 @@ Route::prefix('user')->name('user.')->group(callback: function () {
     Route::post('/logout', action: [UserController::class, 'logout'])
         ->middleware(['auth:sanctum'])
         ->name('logout');
-
+    // обновление данных пользовтеля
     Route::post('update', [UserController::class, 'update'])
         ->middleware(['auth:sanctum'])
         ->name('update');
 
-    Route::post( '/me', function (){
+    Route::post('/send-reset-link', [ResetPasswordController::class, 'sendResetLink'])
+        ->name('password.email');
+
+    Route::post('/reset-password/{token}', [ResetPasswordController::class, 'passwordReset'])
+        ->name('password.update');
+
+    Route::post('/me', function () {
 
         return new UserResource(auth()->user());
     })->middleware(['auth:sanctum']);
@@ -41,28 +49,6 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 //    /*
 //     * Отдаёт текущего пользователя с его постами пагинация на 10 постов
 //     */
-//    Route::get('/profile', action: [AccountUserController::class, 'profile'])
-//        ->middleware(['auth:sanctum'])
-//        ->name('profile');
-//    // роут на страницу пользователя по нику +-
-////    Route::get('/{login}', action: [AccountUserController::class, 'profile'])
-////        ->name('user-account');
-//    // обновление данных пользователя
-//    Route::post('/update', action: [UpdateUserController::class, 'update'])
-//        ->middleware(['auth:sanctum', 'can:update,user']) // 'user' === auth()->user()
-//        ->name('update');
-//    // выход из аккаунта
-//    Route::post('/logout', action: [LogoutUserController::class, 'logout'])
-//        ->middleware(['auth:sanctum'])
-//        ->name('logout');
-//
-//    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-//        ->middleware('signed')
-//        ->name('verification.verify');
-//    Route::post('/send-reset-link', [ResetPasswordController::class, 'sendResetLink'])
-//        ->name('sendResetLink');
-//    Route::post('/reset-password/{token}', [ResetPasswordController::class, 'passwordReset'])
-//        ->name('password.reset');
 });
 // 123
 //Route::prefix('posts')->name('posts.')->group(function () {
@@ -105,7 +91,7 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 Route::get('/get_user/{id}', function ($id) {
     return Cache::get("users:user_{$id}");
 });
-Route::get('/test-queue-mass', function() {
+Route::get('/test-queue-mass', function () {
     \Log::info('=== НАЧАЛО массовой отправки в очередь ===');
 
     $user = \App\Models\User::first();
@@ -179,7 +165,7 @@ Route::get('/show-image', function () {
         'Content-Disposition' => 'inline; filename="himary.jpg"'
     ]);
 });
-Route::get('/test-path', function() {
+Route::get('/test-path', function () {
     try {
 //        \Mail::raw('Тестовое письмо из Laravel', function ($message) {
 //            $email = 'nik.lyamkin@yandex.ru';
@@ -203,7 +189,7 @@ Route::get('/test-path', function() {
         return 'Ошибка: ' . $e->getMessage();
     }
 });
-Route::get('/test-queueqqq', function() {
+Route::get('/test-queueqqq', function () {
     $user = App\Models\User::first();
 
     if (!$user) {
