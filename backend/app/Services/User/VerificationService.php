@@ -17,7 +17,9 @@ class VerificationService
         $code = $user->generateVerificationCode();
         try {
             \Log::info('ушло в ивент');
+
             VerificationCodeMailEvent::dispatch($user, $code);
+
         } catch (\Exception $exception) {
             \Log::error('Failed to send verification code', [
                 'user_id' => $user->id,

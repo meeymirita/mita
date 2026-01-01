@@ -23,7 +23,7 @@ class AuthService
      */
     public function login(array $credentials): array
     {
-        // валидация, реквест удалил сюда всё
+        // валидация,
         $this->validateCredentials($credentials);
         // проверка это логин или почта
         $fieldType = $this->checkFieldType($credentials['login']);

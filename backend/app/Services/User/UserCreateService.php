@@ -28,8 +28,8 @@ class UserCreateService implements UserCreateInterface
         return DB::transaction(function () use ($userData) {
             $user = User::query()->create([
                 'email' => $userData['email'],
-                'type' => UserType::User->value,
-                'status' => UserStatus::Pending->value, // Не подтвержден
+                'type' => UserType::User->value, // User Просто тип
+                'status' => UserStatus::Pending->value, // Pending Не подтвержден
                 'password' => Hash::make($userData['password']),
             ]);
             $token = $user->createToken(
@@ -44,7 +44,6 @@ class UserCreateService implements UserCreateInterface
                     'user_id' => $user->id
                 ]);
             }
-
             return [
                 'user' => $user,
                 'token' => $token,
