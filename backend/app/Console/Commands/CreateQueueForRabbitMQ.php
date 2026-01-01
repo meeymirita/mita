@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Http;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
@@ -30,9 +29,8 @@ class CreateQueueForRabbitMQ extends Command
      */
     public function handle()
     {
-        $config = config('rabbitmq.connections.default');
-
-        if(!$config){
+        $config = config('queue.connections.rabbitmq.hosts.0');
+        if (!$config) {
             \Log::error('Конфига нету');
             return;
         }
@@ -47,11 +45,10 @@ class CreateQueueForRabbitMQ extends Command
                 ->withBasicAuth($login, $password)
                 ->get("http://{$host}:15672/api/queues/%2F");
             $existingQueues = [];
-            if($response->successful()){
+            if ($response->successful()) {
                 $queue = $response->json();
                 foreach ($queue as $queueItem) {
                     $existingQueues[] = $queueItem['name'];
-//                    $this->line("Существующие очереди: {$queueItem['name']}");
                 }
             } else {
                 $this->warn($response->status());
@@ -60,10 +57,13 @@ class CreateQueueForRabbitMQ extends Command
             $connection = new AMQPStreamConnection($host, $port, $login, $password);
             $channel = $connection->channel();
 
-            $queuesToCreate = ['laravel_queue', 'default'];
+            $queuesToCreate = [
+                'laravel_queue',
+                'emails_queue',
+            ];
             $createdQueues = [];
             foreach ($queuesToCreate as $queueName) {
-                if(in_array($queueName, $existingQueues)){
+                if (in_array($queueName, $existingQueues)) {
                     $this->line("Очередь существует - '{$queueName}'");
                     continue;
                 }
@@ -91,8 +91,8 @@ class CreateQueueForRabbitMQ extends Command
 
             $channel->close();
             $connection->close();
-
-        } catch (\Exception $exception){
+            \Log::info('norm');
+        } catch (\Exception $exception) {
             \Log::error($exception->getMessage());
         }
     }

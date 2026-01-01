@@ -18,7 +18,7 @@ return [
     */
 
     'connections' => [
-        'default' => [
+        'rabbitmq' => [
             // Домен контейнера
             'host' => env('RABBITMQ_HOST'),
             // Порт RabbitMQ
@@ -40,6 +40,8 @@ return [
     'queues' => [
         // Основная очередь
         'laravel_queue' => env('RABBITMQ_QUEUE', 'laravel_queue'),
+
+        'email' => 'emails_queue',
     ],
 
     /*

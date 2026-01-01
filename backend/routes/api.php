@@ -92,6 +92,44 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 
 // тест
 // тест
+// Тестовый роут для проверки очереди
+Route::get('/test-queue-mass', function() {
+    \Log::info('=== НАЧАЛО массовой отправки в очередь ===');
+
+    $user = \App\Models\User::first();
+
+    if (!$user) {
+        return response('Пользователь не найден', 404);
+    }
+
+    $start = microtime(true);
+
+    // Отправляем 100 событий
+    for ($i = 1; $i <= 1000; $i++) {
+        event(new \App\Events\VerificationCodeMailEvent($user, 'TEST-' . $i));
+
+        // Логируем каждые 100 итераций
+        if ($i % 100 === 0) {
+            \Log::info("Отправлено событий: {$i}");
+        }
+    }
+
+    $time = microtime(true) - $start;
+    \Log::info('=== КОНЕЦ массовой отправки ===', [
+        'total' => 1000,
+        'time_seconds' => round($time, 2),
+        'events_per_second' => round(1000 / $time, 2)
+    ]);
+
+    return response()->json([
+        'message' => 'Отправлено 1000 событий в очередь',
+        'time_seconds' => round($time, 2),
+        'events_per_second' => round(1000 / $time, 2),
+        'queue' => 'emails_queue',
+        'user_id' => $user->id,
+        'timestamp' => now()
+    ]);
+});
 Route::get('/test', function () {
     return 'asd';
 });

@@ -32,6 +32,10 @@ return [
                 'queue' => [
                     'job' => VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob::class,
                 ],
+                'heartbeat' => 60,
+                'read_write_timeout' => 3600,
+                'keepalive' => true,
+                'connection_timeout' => 10,
             ],
 
             'exchange' => env('RABBITMQ_EXCHANGE', 'default'),
