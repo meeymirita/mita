@@ -12,7 +12,7 @@ use App\Http\Resources\User\UserResource;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Support\Facades\Route;
 use Predis\Response\Status;
-
+// mita
 //  без защиты
 Route::prefix('user')->name('user.')->group(callback: function () {
     //ругистрация с отправкой письма на почту для подтверждения её
