@@ -43,7 +43,7 @@ class SendMailreset extends Mailable
     public function content(): Content
     {
         return new Content(
-           view: 'emails.passwordReset',
+           view: 'emails.password-reset',
            with: [
                 'frontend_url' => 'https://meeymirita.ru/',
                 'user' => $this->user,

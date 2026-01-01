@@ -38,7 +38,7 @@ Route::prefix('user')->name('user.')->group(callback: function () {
         ->name('password.email');
 
     Route::post('/reset-password/{token}', [ResetPasswordController::class, 'passwordReset'])
-        ->name('password.update');
+        ->name('password.reset');
 
     Route::post('/me', function () {
 

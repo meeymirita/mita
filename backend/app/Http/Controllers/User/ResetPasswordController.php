@@ -25,6 +25,10 @@ class ResetPasswordController extends Controller{
         ]);
         $user = User::query()->where('email', $request->email)->first();
 
+        \DB::table('password_reset_tokens')
+            ->where('email', $user->email)
+            ->delete();
+
         $token = Str::random(60);
 
         \DB::table('password_reset_tokens')->updateOrInsert(
@@ -35,17 +39,30 @@ class ResetPasswordController extends Controller{
             ]
         );
 
-        SendResetLinkEvent::dispatch($user, $token);
-        // 1. Валидация email +
-        // 2. Поиск пользователя +
-        // 3. Генерация токена +
-        // 4. Отправка письма (без route('password.reset'))
-        // 5. Ответ JSON
+        try {
+            SendResetLinkEvent::dispatch($user, $token);
+
+            return response()->json([
+                'message' => 'Ссылка для сброса пароля отправлена на email'
+            ], 200);
+        } catch (\Exception $e) {
+            \Log::error('Ошибка отправки ссылки сброса пароля', [
+                'email' => $request->email,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'message' => 'Произошла ошибка при отправке email'
+            ], 500);
+        }
     }
 
     public function passwordReset(string $token)
     {
-
+        $resetRecord = \DB::table('password_reset_tokens')
+            ->where('token', hash('sha256', $token))
+            ->first();
+        dd($resetRecord);
     }
 }
 

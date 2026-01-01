@@ -188,6 +188,10 @@ services:
         condition: service_healthy
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      <<: *healthcheck-defaults
+      start_period: 10s
 
   vuejs:
     image: dockerhub.timeweb.cloud/library/node:25-alpine
@@ -225,7 +229,7 @@ services:
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
       TZ: ${TZ}
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8025/" ]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8025/"]
       <<: *healthcheck-defaults
       start_period: 10s
 

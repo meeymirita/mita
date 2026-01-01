@@ -41,23 +41,34 @@ class SendResetLinkListener implements ShouldQueue
      */
     public function handle(SendResetLinkEvent $event): void
     {
-        Log::error('email', [
+        Log::info('пришло в SendResetLinkEvent', [
             'user_id' => $event->user->id,
-            'user' => $event->user,
-            'token' => $event->token,
+            'email' => $event->user->email,
         ]);
+
         try {
+            if (empty($event->user->email)) {
+                throw new \Exception('Email пользователя пустой');
+            }
+
             Mail::to($event->user->email)
                 ->send(new SendMailreset($event->user, $event->token));
-            if ($this->job) {
-                // Ручное подтверждение успешной обработки
-                $this->job->delete();
-            }
-        }catch (\Exception $e) {
-            Log::error('Ошибка отправки email', [
+
+            Log::info('ушло из SendResetLinkEvent', [
                 'user_id' => $event->user->id,
                 'email' => $event->user->email,
-                'error' => $e->getMessage(),
+            ]);
+
+            if ($this->job) {
+                $this->job->delete();
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Ошибка отправки email SendResetLinkListener', [
+                'user_id' => $event->user->id,
+                'email' => $event->user->email,
+                'error_message' => $e->getMessage(),
+                'error_trace' => $e->getTraceAsString(),
             ]);
 
             if ($this->job && $this->attempts() < $this->tries) {
