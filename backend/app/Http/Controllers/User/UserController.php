@@ -22,6 +22,11 @@ class UserController extends Controller
     public AuthUserInterface $authService;
     public UpdateService $updateService;
 
+    /**
+     * @param UserCreateInterface $userCreate
+     * @param AuthUserInterface $authService
+     * @param UpdateUserInterface $updateService
+     */
     public function __construct(
         UserCreateInterface $userCreate,
         AuthUserInterface   $authService,
@@ -32,7 +37,10 @@ class UserController extends Controller
         $this->authService = $authService;
         $this->updateService = $updateService;
     }
-
+    /**
+     * @param CreateUserRequest $request
+     * @return RegisterResponseResource|JsonResponse
+     */
     public function register(CreateUserRequest $request)
     {
         try {
@@ -42,7 +50,10 @@ class UserController extends Controller
             return response()->json(['message' => 'Ошибка регистрации', 'error' => $e->getMessage()], 500);
         }
     }
-
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function login(Request $request): JsonResponse
     {
         try {
@@ -66,7 +77,10 @@ class UserController extends Controller
             ], 500);
         }
     }
-
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function logout(Request $request): JsonResponse
     {
         // удаление всех токенов пользователя
@@ -75,7 +89,6 @@ class UserController extends Controller
             'status' => 'Вы вышли из аккаунта'
         ]);
     }
-
     /**
      * @param UpdateUserRequest $request
      * @return UserResource
