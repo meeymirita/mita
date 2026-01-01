@@ -1,10 +1,4 @@
 <?php
-
-use App\Enums\UserStatus;
-use App\Enums\UserType;
-use App\Http\Controllers\Image\ImageController;
-use App\Http\Controllers\TestController;
-use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\User\SendVerificationCodeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\VerifyEmailController;
@@ -12,7 +6,6 @@ use App\Http\Resources\User\UserResource;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Support\Facades\Route;
 use Predis\Response\Status;
-// mita
 //  без защиты
 Route::prefix('user')->name('user.')->group(callback: function () {
     //ругистрация с отправкой письма на почту для подтверждения её
