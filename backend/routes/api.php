@@ -33,12 +33,16 @@ Route::prefix('user')->name('user.')->group(callback: function () {
     Route::post('update', [UserController::class, 'update'])
         ->middleware(['auth:sanctum'])
         ->name('update');
-
+    // ссылка на сброс пароля
     Route::post('/send-reset-link', [ResetPasswordController::class, 'sendResetLink'])
         ->name('password.email');
-
-    Route::post('/reset-password/{token}', [ResetPasswordController::class, 'passwordReset'])
+    //Смена пароля по http://localhost:5173/reset-password/token?GDd7UzzC2uohvSkCiQBHH7jVfaXCDiWQJOwXXVgVQp6JhEYYkcKcg9q0x7Ki
+    Route::post('/reset-password/', [ResetPasswordController::class, 'passwordReset'])
         ->name('password.reset');
+    //Смена пароля в лк то есть аторизированного пользователя
+//    Route::post('/reset-password-auth/', [ResetPasswordController::class, 'passwordResetAuthUser'])
+//        ->name('password.reset.auth')
+//        ->middleware(['auth:sanctum']);
 
     Route::post('/me', function () {
 

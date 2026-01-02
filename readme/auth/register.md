@@ -7,7 +7,7 @@
 
 Тело запроса (JSON):
 {
-"email": "mirita@gmail.com",
+"email": "mirita123@gmail.com",
 "password": "mirita123QWE",
 "password_confirmation": "mirita123QWE"
 }
@@ -64,3 +64,14 @@
 1. Пользователь получает email с кодом (пример: 131008)
 2. Вводит email и код в форму / или просто код email сохранить в переменную можно
 3. Если код верный - email подтверждается
+
+====================
+ПОВТОРНАЯ ОТПРАВКА КОДА
+====================
+
+Эндпоинт: /api/user/resend-verification-code
+
+Тело запроса (JSON):
+{
+"email": "mirita@gmail.com",
+}
