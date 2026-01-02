@@ -32,10 +32,10 @@ return [
                 'queue' => [
                     'job' => VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob::class,
                 ],
-                'heartbeat' => 60,
-                'read_write_timeout' => 3600,
+                'heartbeat' => 30,
+                'read_write_timeout' => 5,
                 'keepalive' => true,
-                'connection_timeout' => 10,
+                'connection_timeout' => 5,
             ],
 
             'exchange' => env('RABBITMQ_EXCHANGE', 'default'),
@@ -49,7 +49,9 @@ return [
                 'durable'     => true,
                 'exclusive'   => false,
                 'auto_delete' => false,
-                'arguments'   => null,
+                'arguments'   => [
+                    'x-max-priority' => 10,
+                ],
             ],
 
             // Настройки exchange

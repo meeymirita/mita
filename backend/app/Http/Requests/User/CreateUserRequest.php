@@ -22,22 +22,25 @@ class CreateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email:rfc,dns|unique:users,email|max:255',
-            'password' => 'required|min:3|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
-        ];
-    }
-    public function messages(): array
-    {
-        return [
-            'email.required' => 'Поле email обязательно для заполнения',
-            'email.email' => 'Введите корректный email адрес',
-            'email.unique' => 'Этот email уже зарегистрирован',
-            'email.max' => 'Email не должен превышать 255 символов',
+            'email' => 'required|email',
+            'password' => 'required|min:3',
 
-            'password.required' => 'Поле пароля обязательно для заполнения',
-            'password.min' => 'Пароль должен содержать минимум 3 символа',
-            'password.confirmed' => 'Пароли не совпадают',
-            'password.regex' => 'Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву и одну цифру',
+//            'email' => 'required|email:rfc,dns|unique:users,email|max:255',
+//            'password' => 'required|min:3|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
         ];
     }
+//    public function messages(): array
+//    {
+//        return [
+//            'email.required' => 'Поле email обязательно для заполнения',
+//            'email.email' => 'Введите корректный email адрес',
+//            'email.unique' => 'Этот email уже зарегистрирован',
+//            'email.max' => 'Email не должен превышать 255 символов',
+//
+//            'password.required' => 'Поле пароля обязательно для заполнения',
+//            'password.min' => 'Пароль должен содержать минимум 3 символа',
+//            'password.confirmed' => 'Пароли не совпадают',
+//            'password.regex' => 'Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву и одну цифру',
+//        ];
+//    }
 }

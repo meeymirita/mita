@@ -19,7 +19,7 @@ class VerificationCodeMailListener implements ShouldQueue
     public $connection = 'rabbitmq';
 
     /**
-     * Имя очереди для обработки задания
+     * Имя очереди
      *
      * @var string
      */
@@ -48,13 +48,11 @@ class VerificationCodeMailListener implements ShouldQueue
      */
     public function handle(VerificationCodeMailEvent $event): void
     {
-        sleep(25);
 
         try {
             Mail::to($event->user->email)
                 ->send(new VerificationCodeMail($event->user, $event->code));
             if ($this->job) {
-                // Ручное подтверждение успешной обработки
                 $this->job->delete();
             }
 

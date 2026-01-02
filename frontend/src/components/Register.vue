@@ -1,3 +1,65 @@
+<script setup>
+import { ref, reactive } from 'vue';
+import apiClient from '@/api/axios';
+
+const form = reactive({
+  email: '',
+  password: '',
+  password_confirmation: '',
+});
+
+const registerForm = ref(true);
+const verifyCode = ref(false);
+
+const handleSubmit = async () => {
+  try {
+    const response = await apiClient.post('/user/register', {
+      email: form.email,
+      password: form.password,
+      password_confirmation: form.password_confirmation
+    });
+
+    if (response.data.data?.success === true) {
+      alert('Сообщение ушло на почту');
+      localStorage.setItem('user_email', response.data.data.user.email);
+
+      if (response.data.data.token) {
+        localStorage.setItem('auth_token', response.data.data.token);
+        alert('Токен авторизации');
+      }
+      registerForm.value = false;
+      verifyCode.value = true;
+    }
+  } catch (error) {
+    console.error('Ошибка регистрации:', error);
+  }
+};
+
+const verifyEmailCode = async () => {
+
+  try {
+    const response = await apiClient.post('/user/verify-email', {
+      email: localStorage.getItem('user_email'),
+      code: form.code,
+    });
+
+    if (response.data.success === true) {
+      alert(`${response.data.message}`);
+
+    } else if (response.data.message) {
+      alert(`ℹ️ ${response.data.message}`);
+    } else {
+      alert('Email подтвержден');
+    }
+
+  } catch (error) {
+    console.error(error);
+
+  } finally {
+    // localStorage.clear();
+  }
+};
+</script>
 
 <template>
   <div class="register-container">
@@ -6,51 +68,103 @@
         <h2 class="register-title">Регистрация</h2>
       </div>
 
-      <form class="register-form">
+      <!-- Форма регистрации -->
+      <form v-if="registerForm" class="register-form" @submit.prevent="handleSubmit">
         <div class="form-group">
           <label class="form-label">Email адрес</label>
           <div class="input-group">
             <span class="input-icon">📧</span>
-            <input type="email" class="form-control" placeholder="you@example.com">
+            <input
+              v-model="form.email"
+              type="email"
+              class="form-control"
+              placeholder="you@example.com"
+              required
+            >
           </div>
+          <br>
+          <span style="font-size: 12px; color: #666;">Пример: you@mail.com</span>
         </div>
 
         <div class="form-group">
           <label class="form-label">Пароль</label>
           <div class="input-group">
             <span class="input-icon">🔒</span>
-            <input type="password" class="form-control" placeholder="Создайте пароль">
-            <button type="button" class="password-toggle">👁️</button>
+            <input
+              v-model="form.password"
+              type="password"
+              class="form-control"
+              placeholder="Создайте пароль"
+              required
+            >
           </div>
+          <span style="font-size: 12px; color: #666;">
+            Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву и одну цифру
+          </span>
+          <br>
+          <span style="font-size: 12px; color: #666;">Пример: qweqweQQ123Q</span>
         </div>
 
         <div class="form-group">
           <label class="form-label">Подтверждение пароля</label>
           <div class="input-group">
             <span class="input-icon">✓</span>
-            <input type="password" class="form-control" placeholder="Повторите пароль">
+            <input
+              v-model="form.password_confirmation"
+              type="password"
+              class="form-control"
+              placeholder="Повторите пароль"
+              required
+            >
           </div>
         </div>
 
-        <button type="submit" class="submit-btn">
-          Создать аккаунт →
+        <button type="submit" class="submit-btn" >
+          клик →
         </button>
-
-        <div class="divider">или</div>
-
-        <div class="social-buttons">
-          <button type="button" class="social-btn google-btn">
-            Google
-          </button>
-          <button type="button" class="social-btn github-btn">
-            GitHub
-          </button>
-        </div>
 
         <div class="text-center mt-3">
           <p class="login-link">
             Уже есть аккаунт?
-            <router-link to="/register" class="link">Войдите</router-link>
+            <router-link to="/login" class="link">Войдите</router-link>
+          </p>
+        </div>
+      </form>
+
+      <!-- Форма подтверждения email -->
+      <form v-if="verifyCode" class="register-form" @submit.prevent="verifyEmailCode">
+        <div class="text-center mb-4">
+          <h3 class="verify-title">Подтверждение email</h3>
+          <p class="verify-subtitle">
+<!--            Код отправлен на {{ localStorage.getItem('user_email') ?? '' }}-->
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Код подтверждения</label>
+          <div class="input-group">
+            <span class="input-icon">🔢</span>
+            <input
+              v-model="form.code"
+              class="form-control"
+              placeholder="Введите 6-значный код"
+              required
+              maxlength="6"
+            >
+          </div>
+          <span style="font-size: 12px; color: #666; margin-top: 5px; display: block;">
+            Введите код, который пришел на ваш email
+          </span>
+        </div>
+
+        <button type="submit" class="submit-btn" >
+          клик →
+        </button>
+
+        <div class="text-center mt-3">
+          <p class="resend-link">
+            Не получили код?
+            <a href="#" @click.prevent="resendCode" class="link">Отправить повторно</a>
           </p>
         </div>
       </form>
@@ -59,6 +173,34 @@
 </template>
 
 <style scoped>
+/* Стили для формы подтверждения */
+.verify-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+}
+
+.verify-subtitle {
+  color: #718096;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.resend-link {
+  color: #718096;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.back-link {
+  margin-top: 0.5rem;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 .form-control:focus {
   box-shadow: none !important;
   border-color: #dee2e6 !important;

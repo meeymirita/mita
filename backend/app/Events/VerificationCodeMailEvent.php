@@ -24,11 +24,6 @@ class VerificationCodeMailEvent
     {
         $this->user = $user;
         $this->code = $code;
-        \Log::info('пришло в ивент', [
-                'user' => $user,
-                'code' => $code,
-            ]
-        );
     }
 
     /**
