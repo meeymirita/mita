@@ -36,7 +36,6 @@ const handleSubmit = async () => {
 };
 
 const verifyEmailCode = async () => {
-
   try {
     const response = await apiClient.post('/user/verify-email', {
       email: localStorage.getItem('user_email'),
@@ -59,6 +58,17 @@ const verifyEmailCode = async () => {
     // localStorage.clear();
   }
 };
+const resendCode = async () => {
+  try {
+    const response = await apiClient.post('/user/resend-verification-code', {
+      email: localStorage.getItem('user_email'),
+    });
+    alert('Код отправлен повторно');
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 </script>
 
 <template>

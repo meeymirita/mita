@@ -9,19 +9,19 @@ const apiClient = axios.create({
 });
 
 // Перехватчик запросов
-// apiClient.interceptors.request.use(
-//   config => {
-//     // токен авторизации
-//     const token = localStorage.getItem('token');
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   error => {
-//     return Promise.reject(error);
-//   }
-// );
+apiClient.interceptors.request.use(
+  config => {
+    // токен авторизации
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 //
 // apiClient.interceptors.response.use(
 //   response => response,

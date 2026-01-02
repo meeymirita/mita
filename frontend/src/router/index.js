@@ -4,6 +4,7 @@ import HomePage from "@/pages/Home.vue";
 import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import Logout from '@/components/Logout.vue'
+import Me from '@/components/Me.vue'
 const routes = [
   {
     path: "/",
@@ -28,6 +29,11 @@ const routes = [
         path: "logout",
         name: "profile",
         component: Logout,
+      },
+      {
+        path: "me",
+        name: "me",
+        component: Me,
       },
     ]
   }

@@ -44,8 +44,7 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 //        ->name('password.reset.auth')
 //        ->middleware(['auth:sanctum']);
 
-    Route::post('/me', function () {
-
+    Route::get('/me', function () {
         return new UserResource(auth()->user());
     })->middleware(['auth:sanctum']);
 //    Либу поставить для реалтайм уводомлений

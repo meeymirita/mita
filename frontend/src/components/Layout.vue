@@ -14,6 +14,9 @@ console.log( currentPath.value);
             <router-link to="/" class="nav-link">Главная</router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/me" class="nav-link ">Профиль</router-link>
+          </li>
+          <li class="nav-item">
             <router-link to="/register" class="nav-link">Регистрация</router-link>
           </li>
           <li class="nav-item">

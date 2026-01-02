@@ -1,3 +1,39 @@
+<script setup>
+import { ref, reactive } from 'vue';
+import apiClient from '@/api/axios';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const form = reactive({
+  login: '',
+  password: '',
+});
+
+//youasdas@mail.com
+//qweqweQQ123Q
+const handleSubmit = async () => {
+  localStorage.clear()
+  try {
+    const response = await apiClient.post('/user/login', {
+      login: form.login,
+      password: form.password,
+    });
+    console.log(response.data)
+    localStorage.setItem('user', JSON.stringify(response.data.data.user));
+    const token = response.data.data.token;
+    localStorage.setItem('auth_token', token);
+    const data = new Date(response.data.data.expires_at).toLocaleDateString()
+    localStorage.setItem('expires_at', data);
+
+    if (response.data.success === true){
+      alert('Успешный вход')
+      router.push('/me');
+    }
+  } catch (error) {
+    console.error('Ошибка регистрации:', error);
+  }
+};
+
+</script>
 <template>
   <div class="register-container">
     <div class="register-card">
@@ -5,12 +41,12 @@
         <h2 class="register-title">Вход</h2>
       </div>
 
-      <form class="register-form">
+      <form class="register-form" @submit.prevent="handleSubmit">
         <div class="form-group">
           <label class="form-label">Email адрес</label>
           <div class="input-group">
             <span class="input-icon">📧</span>
-            <input type="email" class="form-control" placeholder="you@example.com">
+            <input v-model="form.login" type="text" class="form-control" placeholder="you@example.com">
           </div>
         </div>
 
@@ -18,13 +54,13 @@
           <label class="form-label">Пароль</label>
           <div class="input-group">
             <span class="input-icon">🔒</span>
-            <input type="password" class="form-control" placeholder="Создайте пароль">
+            <input v-model="form.password" type="password" class="form-control" placeholder="Создайте пароль">
             <button type="button" class="password-toggle">👁️</button>
           </div>
         </div>
 
         <button type="submit" class="submit-btn">
-          Создать аккаунт →
+          клик →
         </button>
 
         <div class="divider">или</div>
@@ -254,5 +290,3 @@
   }
 }
 </style>
-<script setup lang="ts">
-</script>

@@ -38,12 +38,15 @@ class VerificationService
      */
     public function resendVerificationCode(User $user): bool
     {
-        if (
-            $user->verification_code_expires_at &&
-            $user->verification_code_expires_at->subMinutes(1) < now()
-        ) {
-            throw new \Exception('Повторный код можно запросить через 1 минуту');
-        }
+
+        // таймаут
+
+//        if (
+//            $user->verification_code_expires_at &&
+//            $user->verification_code_expires_at->subMinutes(1) < now()
+//        ) {
+//            throw new \Exception('Повторный код можно запросить через 1 минуту');
+//        }
         return $this->sendVerificationCode($user);
     }
 
