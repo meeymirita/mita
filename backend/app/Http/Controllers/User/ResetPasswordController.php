@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Contracts\User\PasswordResetUserInterface;
 use App\Events\SendResetLinkEvent;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -15,6 +16,16 @@ use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {
+
+    public PasswordResetUserInterface $passwordReset;
+
+    public function __construct(
+        PasswordResetUserInterface $passwordReset
+    )
+    {
+        $this->passwordReset = $passwordReset;
+    }
+
     /**
      * {
      * "email": "mirita1@gmail.com"
@@ -24,35 +35,25 @@ class ResetPasswordController extends Controller
      */
     public function sendResetLink(Request $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ], [
-            'email.required' => 'Поля обязательно для заполнения',
-            'email.exists' => 'Такой емаил не найден (',
-        ]);
-        // поиск пользователя
-        $user = $this->findUserForEmail($request->email);
-        // удаление токенов у него
-        $this->deleteTokenFromEmail($user->email);
-        // генерация нового
-        $token = Str::random(60);
-        // по емаил находим и вставялем токен
-        \DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $user->email],
-            [
-                'token' => hash('sha256', $token),
-                'created_at' => now(),
-            ]
-        );
-
         try {
-            // отправка письма с токеном
-            SendResetLinkEvent::dispatch($user, $token);
+            $validated = $request->validate([
+                'email' => 'required|email|exists:users,email',
+            ], [
+                'email.required' => 'Поля обязательно для заполнения',
+                'email.exists' => 'Такой емаил не найден (',
+            ]);
+
+            $this->passwordReset->sendResetLink($validated['email']);
 
             return response()->json([
-                'message' => 'Ссылка для сброса пароля отправлена на email'
+                'message' => 'Ссылка для сброса пароля отправлена на email',
             ], 200);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
+            \Log::error('Произошла оишбка', [
+                'email' => $request->email,
+                'error' => $exception->getMessage()
+            ]);
+
             return response()->json([
                 'message' => 'Произошла ошибка при отправке email'
             ], 500);
@@ -66,8 +67,6 @@ class ResetPasswordController extends Controller
      * "password": "qweqweqweqw",
      * "password_confirmation": "qweqweqweqw"
      * }
-     * @param Request $request
-     * @return JsonResponse
      */
     public function passwordReset(Request $request)
     {
@@ -87,78 +86,27 @@ class ResetPasswordController extends Controller
             ], 422);
         }
         try {
-            $resetRecord = $this->getValidResetToken($request->token);
-            if (!$resetRecord) {
-                return response()->json([
-                    'error' => 'Неверный или просроченный токен'
-                ], 400);
-            }
-
-            $tokenCreatedAt = Carbon::parse($resetRecord->created_at);
-            if ($tokenCreatedAt->diffInMinutes(now()) > 60) {
-                $this->deleteTokenFromEmail($resetRecord->email);
-                return response()->json([
-                    'error' => 'Срок действия токена истек'
-                ], 400);
-            }
-            $user = $this->findUserForEmail($resetRecord->email);
-            if (!$user) {
-                return response()->json([
-                    'error' => 'Пользователь не найден'
-                ], 404);
-            }
-            $user->password = Hash::make($request->password);
-
-            $user->save();
-
-            $this->deleteTokenFromEmail($resetRecord->email);
+            $validatedData = $validator->validated();
+            $this->passwordReset->passwordReset($validatedData);
 
             return response()->json([
                 'message' => 'Пароль успешно изменен'
             ], 200);
 
         } catch (\Exception $e) {
-            \Log::error('Ошибка при сбросе пароля', [
+            \Log::error('Password reset error', [
                 'token' => $request->token,
                 'error' => $e->getMessage()
             ]);
 
+            $statusCode = str_contains($e->getMessage(), 'Неверный') ||
+            str_contains($e->getMessage(), 'Срок действия') ? 400 : 500;
+
             return response()->json([
-                'message' => 'Произошла ошибка при сбросе пароля'
-            ], 500);
+                'message' => $e->getMessage()
+            ], $statusCode);
         }
     }
 
-    /**
-     * Валидация токена
-     * @param string $token
-     * @return string|null
-     */
-    public function getValidResetToken(string $token)
-    {
-        if (!preg_match('/^[a-zA-Z0-9]+$/', $token) || strlen($token) > 60) {
-            return null;
-        }
-        // может быть нулл
-        $record = \DB::table('password_reset_tokens')
-            ->where('token', hash('sha256', $token))
-            ->first();
-
-        return $record;
-    }
-
-    // поиск пользователя по емаил
-    public function findUserForEmail(string $email)
-    {
-        return User::query()->where('email', $email)->first();
-    }
-
-    // удаление токена по емаил
-    public function deleteTokenFromEmail(string $email)
-    {
-        return \DB::table('password_reset_tokens')
-            ->where('email', $email)
-            ->delete();
-    }
 }
 

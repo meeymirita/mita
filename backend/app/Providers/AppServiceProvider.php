@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Contracts\User\AuthUserInterface;
+use App\Contracts\User\PasswordResetUserInterface;
 use App\Contracts\User\UpdateUserInterface;
 use App\Contracts\User\UserCreateInterface;
 use App\Services\User\AuthService;
+use App\Services\User\PasswordResetService;
 use App\Services\User\UpdateService;
 use App\Services\User\UserCreateService;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             UpdateUserInterface::class,
             UpdateService::class
+        );
+        $this->app->bind(
+            PasswordResetUserInterface::class,
+            PasswordResetService::class
         );
     }
 
