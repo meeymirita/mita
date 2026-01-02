@@ -1,4 +1,4 @@
-зщ<template>
+<template>
   <header>
     <div class="header__wrapper container">
       <nav class="header__nav">
@@ -20,11 +20,3 @@
 
 </script>
 
-<style scoped>
-.header__nav-list {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-  color: #2c3e50;
-}
-</style>

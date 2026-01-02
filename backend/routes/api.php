@@ -48,7 +48,8 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 
         return new UserResource(auth()->user());
     })->middleware(['auth:sanctum']);
-
+//    Либу поставить для реалтайм уводомлений
+//https://github.com/levskiy0/laravel-long-polling
 
 //    /*
 //     * Отдаёт текущего пользователя с его постами пагинация на 10 постов
