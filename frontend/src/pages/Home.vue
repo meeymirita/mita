@@ -1,9 +1,7 @@
 <template>
-  <div class="">
-    <button @click="showToast" class="btn btn-success">
-      Test Toast Notification
-    </button>
-  </div>
+    <div class="row">
+qwe
+    </div>
 </template>
 
 <script setup>
