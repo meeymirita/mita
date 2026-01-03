@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources\User;
 
+use App\Enums\UserStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class RegisterResponseResource extends JsonResource
+class RegisterAndLoginUserResponseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,10 +16,10 @@ class RegisterResponseResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'success' => true,
             'user'=> new UserResource($this->resource['user']),
-            'requires_verification' => true,
             'token' => $this->resource['token'],
+            'token_type' => $this->resource['token_type'],
+            'expires_at' => $this->resource['expires_at'],
         ];
     }
 

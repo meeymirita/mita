@@ -8,7 +8,7 @@ use App\Contracts\User\UserCreateInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
-use App\Http\Resources\User\LoginResponseResource;
+use App\Http\Resources\User\RegisterAndLoginUserResponseResource;
 use App\Http\Resources\User\RegisterResponseResource;
 use App\Http\Resources\User\UserResource;
 use App\Services\User\UpdateService;
@@ -39,13 +39,13 @@ class UserController extends Controller
     }
     /**
      * @param CreateUserRequest $request
-     * @return RegisterResponseResource|JsonResponse
+     * @return RegisterAndLoginUserResponseResource|JsonResponse
      */
     public function register(CreateUserRequest $request)
     {
         try {
             $data = $this->userCreate->createUser($request->validated());
-            return new RegisterResponseResource($data);
+            return new RegisterAndLoginUserResponseResource($data);
         } catch (\Throwable $e) {
             return response()->json(['message' => 'Ошибка регистрации', 'error' => $e->getMessage()], 500);
         }
@@ -61,7 +61,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Авторизация успешна',
-                'data' => new LoginResponseResource($data)
+                'data' => new RegisterAndLoginUserResponseResource($data)
             ], 200);
         } catch (ValidationException $e) {
             return response()->json([

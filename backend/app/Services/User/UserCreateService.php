@@ -45,6 +45,8 @@ class UserCreateService implements UserCreateInterface
             return [
                 'user' => $user,
                 'token' => $token,
+                'token_type' => 'Bearer',
+                'expires_at' => now()->addWeek()->toISOString(),
             ];
         });
     }
