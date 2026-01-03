@@ -15,12 +15,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('login')->unique();
+            $table->string('name')->nullable();
+            $table->string('login')->unique()->nullable();
             $table->string('email')->unique();
-            $table->enum('type', UserType::values())->default(UserType::User->value);
-            $table->enum('status', UserStatus::values())->default(UserStatus::Pending->value);
+
+            // User $attributes
+            $table->string('type');
+            $table->string('status');
+
+            // User $casts
             $table->timestamp('email_verified_at')->nullable();
+
+            $table->string('verification_code')->nullable();
+            $table->timestamp('verification_code_expires_at')->nullable();
+
+            // User $casts
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

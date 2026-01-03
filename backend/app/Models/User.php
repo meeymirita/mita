@@ -47,26 +47,20 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $attributes = [
+        'type' => UserType::User->value,
+        'status' => UserStatus::Pending->value,
+    ];
+
     /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
      */
     protected $casts = [
-        'type' => UserType::class,
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    /**
-     * связь с постами 1 юзер много постов
-     * @return HasMany
-     */
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class);
-    }
-
     /**
      * Генерация кода подтверждения
      * @return string

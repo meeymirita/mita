@@ -24,11 +24,10 @@ class UserCreateService implements UserCreateInterface
      */
     public function createUser(array $userData): mixed
     {
+        // 'type' 'status в User $attributes
         return DB::transaction(function () use ($userData) {
             $user = User::query()->create([
                 'email' => $userData['email'],
-                'type' => UserType::User->value, // User Просто тип
-                'status' => UserStatus::Pending->value, // Pending Не подтвержден
                 'password' => Hash::make($userData['password']),
             ]);
             $token = $user->createToken(
