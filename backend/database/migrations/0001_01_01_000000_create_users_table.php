@@ -29,6 +29,10 @@ return new class extends Migration
             $table->string('verification_code')->nullable();
             $table->timestamp('verification_code_expires_at')->nullable();
 
+            $table->string('position')->default('employee');
+            $table->json('allowed_categories')->nullable();
+
+
             // User $casts
             $table->string('password');
             $table->rememberToken();

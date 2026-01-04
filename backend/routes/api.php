@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Car\CarController;
 use App\Http\Controllers\User\ResetPasswordController;
 use App\Http\Controllers\User\SendVerificationCodeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\VerifyEmailController;
 use App\Http\Resources\User\UserResource;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('user')->name('user.')->group(callback: function () {
@@ -44,3 +46,7 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 
 });
 
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/available-cars', [CarController::class, 'getAvailableCars']);
+});

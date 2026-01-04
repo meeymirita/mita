@@ -52,6 +52,17 @@ class User extends Authenticatable
         'status' => UserStatus::Pending->value,
     ];
 
+    public function canUseCarCategory($category)
+    {
+        // Если у пользователя нет ограничений - все доступно
+        if (empty($this->allowed_categories)) {
+            return true;
+        }
+
+        // Проверяем доступ к категории
+        return in_array($category, $this->allowed_categories);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
