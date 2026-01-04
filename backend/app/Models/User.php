@@ -54,12 +54,10 @@ class User extends Authenticatable
 
     public function canUseCarCategory($category)
     {
-        // Если у пользователя нет ограничений - все доступно
         if (empty($this->allowed_categories)) {
             return true;
         }
 
-        // Проверяем доступ к категории
         return in_array($category, $this->allowed_categories);
     }
 
