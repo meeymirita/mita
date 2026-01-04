@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Contracts\Article\ArticleIndexPageInterface;
 use App\Contracts\User\AuthUserInterface;
 use App\Contracts\User\PasswordResetUserInterface;
 use App\Contracts\User\UpdateUserInterface;
 use App\Contracts\User\UserCreateInterface;
+use App\Services\Article\ArticleIndexPageService;
 use App\Services\User\AuthService;
 use App\Services\User\PasswordResetService;
 use App\Services\User\UpdateService;
@@ -20,21 +22,31 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        /**
+         *  User Interface
+         */
         $this->app->bind(
-            UserCreateInterface::class,
-            UserCreateService::class
+            abstract: UserCreateInterface::class,
+            concrete: UserCreateService::class
         );
         $this->app->bind(
-            AuthUserInterface::class,
-            AuthService::class
+            abstract: AuthUserInterface::class,
+            concrete: AuthService::class
         );
         $this->app->bind(
-            UpdateUserInterface::class,
-            UpdateService::class
+            abstract: UpdateUserInterface::class,
+            concrete: UpdateService::class
         );
         $this->app->bind(
-            PasswordResetUserInterface::class,
-            PasswordResetService::class
+            abstract: PasswordResetUserInterface::class,
+            concrete: PasswordResetService::class
+        );
+        /**
+        *  Article Interface
+        */
+        $this->app->bind(
+            abstract: ArticleIndexPageInterface::class,
+            concrete: ArticleIndexPageService::class
         );
     }
 

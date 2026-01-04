@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class AccountUserPolicy
+class UserPolicy
 {
     /**
      * @param User $currentUser

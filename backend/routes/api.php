@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Article\ArticleController;
 use App\Http\Controllers\User\ResetPasswordController;
 use App\Http\Controllers\User\SendVerificationCodeController;
 use App\Http\Controllers\User\UserController;
@@ -11,34 +12,34 @@ use Illuminate\Support\Facades\Route;
 //  без защиты
 Route::prefix('user')->name('user.')->group(callback: function () {
     //ругистрация с отправкой письма на почту для подтверждения её
-    Route::post('/register', action: [UserController::class, 'register'])
-        ->name('register');
+    Route::post(uri: '/register', action: [UserController::class, 'register'])
+        ->name(name: 'register');
     // Подтверждение email
-    Route::post('/verify-email', [VerifyEmailController::class, 'verify'])
-        ->name('verify-email');
+    Route::post(uri: '/verify-email', action: [VerifyEmailController::class, 'verify'])
+        ->name(name: 'verify-email');
     // Отправка кода
-    Route::post('/send-verification-code', [SendVerificationCodeController::class, 'sendCode'])
-        ->name('send-verification-code');
+    Route::post(uri: '/send-verification-code', action: [SendVerificationCodeController::class, 'sendCode'])
+        ->name(name: 'send-verification-code');
     // Повторная отправка кода
-    Route::post('/resend-verification-code', [SendVerificationCodeController::class, 'resendCode'])
-        ->name('resend-verification-code');
+    Route::post(uri: '/resend-verification-code', action: [SendVerificationCodeController::class, 'resendCode'])
+        ->name(name: 'resend-verification-code');
     // вход в аккаунт
-    Route::post('/login', action: [UserController::class, 'login'])
-        ->name('login');
+    Route::post(uri: '/login', action: [UserController::class, 'login'])
+        ->name(name: 'login');
     // выход из аккаунта
-    Route::post('/logout', action: [UserController::class, 'logout'])
+    Route::post(uri: '/logout', action: [UserController::class, 'logout'])
         ->middleware(['auth:sanctum'])
-        ->name('logout');
+        ->name(name: 'logout');
     // обновление данных пользовтеля
-    Route::post('update', [UserController::class, 'update'])
+    Route::post(uri: 'update', action: [UserController::class, 'update'])
         ->middleware(['auth:sanctum'])
-        ->name('update');
+        ->name(name: 'update');
     // ссылка на сброс пароля
-    Route::post('/send-reset-link', [ResetPasswordController::class, 'sendResetLink'])
-        ->name('password.email');
+    Route::post(uri: '/send-reset-link', action: [ResetPasswordController::class, 'sendResetLink'])
+        ->name(name: 'password.email');
     //Смена пароля по http://localhost:5173/reset-password/token?GDd7UzzC2uohvSkCiQBHH7jVfaXCDiWQJOwXXVgVQp6JhEYYkcKcg9q0x7Ki
-    Route::post('/reset-password/', [ResetPasswordController::class, 'passwordReset'])
-        ->name('password.reset');
+    Route::post(uri: '/reset-password/', action: [ResetPasswordController::class, 'passwordReset'])
+        ->name(name: 'password.reset');
     //Смена пароля в лк то есть аторизированного пользователя
 //    Route::post('/reset-password-auth/', [ResetPasswordController::class, 'passwordResetAuthUser'])
 //        ->name('password.reset.auth')
@@ -54,39 +55,10 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 //     * Отдаёт текущего пользователя с его постами пагинация на 10 постов
 //     */
 });
-// 123
-//Route::prefix('posts')->name('posts.')->group(function () {
-//    // все посты на главную
-//    Route::get('/', [PostController::class, 'index'])->name('index');
-//    // посмотреть пост
-//    Route::get('/{post}', [PostController::class, 'show'])->name('show');
-//    // действия с постами авторизованного пользователя
-//    Route::middleware('auth:sanctum')->group(function () {
-//        Route::post('/', [PostController::class, 'store'])->name('store');
-//        Route::put('/{post}', [PostController::class, 'update'])->name('update');
-//        Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
-//    });
-//    // имаге в ресурс для отдачи в другой ресурс
-//    Route::get('/images/{image}/view', [ImageController::class, 'view'])->name('images.view');
-//    Route::get('/images/{image}/download', [ImageController::class, 'download'])->name('images.download');
-//});
-//Route::get('/check', function () {
-//    return response()->json([
-//        'authenticated' => Auth::check(),
-//        'user' => Auth::user()
-//    ]);
-//})->middleware('auth:sanctum');
-////  auth:sanctum и verified -> и если толька почта подтверждена
-//Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-//    Route::get('/profile', function () {
-//        // resolve удаляет data {}
-//        return (new UserResource(auth()->user()))->resolve();
-//    });
-//
-//    Route::get('/dashboard', function () {
-//        return response()->json(['message' => 'Dashboard data']);
-//    });
-//});
+
+Route::prefix('article')->name(value: 'article.')->group(callback: function () {
+    Route::get(uri: '/', action: [ArticleController::class, 'index']);
+});
 
 
 // тест

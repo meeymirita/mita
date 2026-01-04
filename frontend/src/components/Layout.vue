@@ -25,6 +25,9 @@ console.log( currentPath.value);
           <li class="nav-item">
             <router-link to="/logout" class="nav-link ">Выход</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/posts" class="nav-link ">Посты</router-link>
+          </li>
         </ul>
       </div>
     </aside>

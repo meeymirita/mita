@@ -3,16 +3,16 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Post;
-use App\Models\Comment;
-use App\Models\Image;
-use App\Models\Tag;
+use App\Models\Article;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = User::factory(1000)->create();
+        // 10 пользователей по 2 поста
+        User::factory(10)
+            ->hasArticles(2)
+            ->create();
     }
 }

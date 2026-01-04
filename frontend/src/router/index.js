@@ -5,6 +5,7 @@ import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import Logout from '@/components/Logout.vue'
 import Me from '@/components/Me.vue'
+import AllPosts from '@/components/AllPosts.vue'
 const routes = [
   {
     path: "/",
@@ -34,6 +35,11 @@ const routes = [
         path: "me",
         name: "me",
         component: Me,
+      },
+      {
+        path: "posts",
+        name: "posts",
+        component: AllPosts,
       },
     ]
   }
