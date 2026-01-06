@@ -13,14 +13,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  // ДОБАВЬТЕ ЭТО для Docker:
   server: {
-    host: '0.0.0.0',  // Это важно для Docker!
+    host: '0.0.0.0',
     port: 5173,
     allowedHosts: ['meeymirita.ru', 'www.meeymirita.ru'],
-    strictPort: true,  // Не менять порт если занят
+    strictPort: true,
     watch: {
-      usePolling: true  // Для hot reload в Docker
+      usePolling: true
     }
   }
 })

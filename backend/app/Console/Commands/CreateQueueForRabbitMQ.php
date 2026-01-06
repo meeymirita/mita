@@ -60,6 +60,7 @@ class CreateQueueForRabbitMQ extends Command
             $queuesToCreate = [
                 'laravel_queue',
                 'emails_queue',
+                'media_queue'
             ];
             $createdQueues = [];
             foreach ($queuesToCreate as $queueName) {

@@ -13,7 +13,14 @@ class ArticleIndexPageService implements ArticleIndexPageInterface
     {
         return Article::query()
             ->select(['id', 'user_id', 'title', 'slug', 'description', 'created_at'])
-            ->with(['user' => fn($q) => $q->select('id', 'login', 'type')])
+            ->with(
+                [
+                    'user' => fn($q) => $q->select('id', 'login', 'type'),
+                    'likes' => fn($q) => $q->select('users.id', 'users.login', 'users.name')
+                        ->withPivot('created_at') // дата лайка
+                ]
+            )
+            ->withCount('likes')
             ->latest(column: 'id')
             ->paginate($perPage, ['*'], 'page', $page);
     }

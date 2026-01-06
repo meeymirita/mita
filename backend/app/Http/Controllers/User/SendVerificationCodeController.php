@@ -10,23 +10,17 @@ use Illuminate\Http\Request;
 
 class SendVerificationCodeController extends Controller
 {
-    public function __construct
-    (private VerificationService $verificationService)
-    {
-    }
+    public function __construct(
+        private VerificationService $verificationService
+    ){}
 
     /**
      * Отправка кода подтверждения
-     * @param Request $request
-     * @return JsonResponse
+     *
      */
     public function sendCode(Request $request) : JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
-
-        $user = User::query()->where('email', $request->get('email'))->first();
+        $user = $this->validateUserEmail($request);
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
@@ -48,7 +42,6 @@ class SendVerificationCodeController extends Controller
             ], 500);
         }
     }
-
     /**
      * Повторная отправка кода
      * @param Request $request
@@ -56,11 +49,7 @@ class SendVerificationCodeController extends Controller
      */
     public function resendCode(Request $request) : JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
-
-        $user = User::query()->where('email', $request->get('email'))->first();
+        $user = $this->validateUserEmail($request);
 
         try {
             $this->verificationService->resendVerificationCode($user);
@@ -76,5 +65,14 @@ class SendVerificationCodeController extends Controller
                 'message' => $e->getMessage()
             ], 400);
         }
+    }
+
+    public function validateUserEmail($request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        return User::query()->where('email', $validated['email'])->first();
     }
 }

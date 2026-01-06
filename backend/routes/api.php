@@ -6,8 +6,10 @@ use App\Http\Controllers\User\SendVerificationCodeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\VerifyEmailController;
 use App\Http\Resources\User\UserResource;
+use App\Models\Article;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 //  без защиты
 Route::prefix('user')->name('user.')->group(callback: function () {
@@ -46,22 +48,24 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 //        ->middleware(['auth:sanctum']);
 
     Route::get('/me', function () {
-        return new UserResource(auth()->user());
+        $user = Auth::user();
+        return response()->json([
+            'data' => new UserResource($user),
+        ]);
     })->middleware(['auth:sanctum']);
 //    Либу поставить для реалтайм уводомлений
 //https://github.com/levskiy0/laravel-long-polling
-
-//    /*
-//     * Отдаёт текущего пользователя с его постами пагинация на 10 постов
-//     */
 });
 
 Route::prefix('article')->name(value: 'article.')->group(callback: function () {
     Route::get(uri: '/', action: [ArticleController::class, 'index']);
 });
+Route::get('/article_like', function () {
 
+    $post = Article::find(1);
+    return response()->json($post->likes);
 
-// тест
+});
 // тест
 // Тестовый роут для проверки очереди
 Route::get('/get_user/{id}', function ($id) {

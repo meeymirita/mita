@@ -26,9 +26,15 @@ class Article extends Model
     /**
     * Relationships
     */
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function likes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'articles_users_likes')
+            ->withTimestamps();
     }
 
 }

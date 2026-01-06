@@ -18,7 +18,6 @@ const handleSubmit = async () => {
       password: form.password,
     });
     console.log(response.data)
-    localStorage.setItem('user', JSON.stringify(response.data.data.user));
     const token = response.data.data.token;
     localStorage.setItem('auth_token', token);
     const data = new Date(response.data.data.expires_at).toLocaleDateString()

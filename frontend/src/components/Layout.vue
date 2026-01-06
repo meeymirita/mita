@@ -28,6 +28,9 @@ console.log( currentPath.value);
           <li class="nav-item">
             <router-link to="/posts" class="nav-link ">Посты</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/crop" class="nav-link ">crop</router-link>
+          </li>
         </ul>
       </div>
     </aside>

@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('articles_users_likes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('articles_id');
+            $table->unsignedBigInteger('article_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
-            $table->index('articles_id');
+            $table->index('article_id');
             $table->index('user_id');
 
-            $table->foreign('articles_id')->references('id')->on('articles');
+            $table->foreign('article_id')->references('id')->on('articles');
             $table->foreign('user_id')->references('id')->on('users');
+
+            $table->unique(['article_id', 'user_id']);
         });
     }
 

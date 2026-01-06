@@ -4,10 +4,15 @@ namespace App\Services\User;
 
 use App\Events\VerificationCodeMailEvent;
 use App\Models\User;
+use Carbon\Carbon;
 use Random\RandomException;
 
 class VerificationService
 {
+
+    private const CODE_LIFETIME_MINUTES = 5;
+    private const RESEND_TIMEOUT_MINUTES = 1;
+
     /**
      * @throws RandomException
      */
@@ -15,16 +20,22 @@ class VerificationService
     {
         // генерация кода
         $code = $user->generateVerificationCode();
+
         try {
-            \Log::info('ушло в ивент');
-
             VerificationCodeMailEvent::dispatch($user, $code);
-
+            \Log::info('code sent', ['user_id' => $user->id]);
+            return true;
         } catch (\Exception $exception) {
             \Log::error('Failed to send verification code', [
                 'user_id' => $user->id,
                 'error' => $exception->getMessage()
             ]);
+
+            $user->update([
+                'verification_code' => null,
+                'verification_code_expires_at' => null,
+            ]);
+
             return false;
         }
 
@@ -38,15 +49,24 @@ class VerificationService
      */
     public function resendVerificationCode(User $user): bool
     {
+        if (!$user->verification_code_expires_at) {
+            return $this->sendVerificationCode($user);
+        }
 
-        // таймаут
+        $codeSentAt = Carbon::parse($user->verification_code_expires_at)
+            ->subMinutes(self::CODE_LIFETIME_MINUTES);
 
-//        if (
-//            $user->verification_code_expires_at &&
-//            $user->verification_code_expires_at->subMinutes(1) < now()
-//        ) {
-//            throw new \Exception('Повторный код можно запросить через 1 минуту');
-//        }
+        // Время когда можно отправить повторно (время отправки + 1 минута)
+        $canResendAt = $codeSentAt->addMinutes(self::RESEND_TIMEOUT_MINUTES);
+
+        // Если сейчас время меньше времени повторной отправки
+        if (now()->lessThan($canResendAt)) {
+            $secondsLeft = now()->diffInSeconds($canResendAt);
+            $minutesLeft = ceil($secondsLeft / 60);
+
+            throw new \Exception('Повторный код можно запросить через ' . $minutesLeft . ' минут(ы)');
+        }
+
         return $this->sendVerificationCode($user);
     }
 

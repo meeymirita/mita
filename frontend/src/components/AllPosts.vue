@@ -1,83 +1,84 @@
 <script setup>
 import apiClient from '@/api/axios.js'
-import { ref, onMounted, computed, reactive } from 'vue';
+import { ref, onMounted, computed, reactive } from 'vue'
 
 const posts = reactive({
   data: [],
   meta: {},
   links: {}
-});
-const loading = ref(true);
-const currentPage = ref(1);
+})
+const loading = ref(true)
+const currentPage = ref(1)
 
 const getPosts = async (page = 1) => {
-  loading.value = true;
-  currentPage.value = page;
+  loading.value = true
+  currentPage.value = page
 
   try {
     const response = await apiClient.get('/article', {
       params: { page }
-    });
+    })
 
     // Laravel
     // data: [...], meta: {...}, links: {...}
-    posts.data = response.data.data || [];
-    posts.meta = response.data.meta || {};
-    posts.links = response.data.links || {};
-  } catch (error) {
-    console.error('Error fetching posts:', error);
-  } finally {
-    loading.value = false;
-  }
-};
+    posts.data = response.data.data || []
+    posts.meta = response.data.meta || {}
+    posts.links = response.data.links || {}
 
-const totalPages = computed(() => posts.meta.last_page || 1);
-const hasNextPage = computed(() => !!posts.links.next);
-const hasPrevPage = computed(() => !!posts.links.prev);
-const isFirstPage = computed(() => currentPage.value === 1);
-const isLastPage = computed(() => currentPage.value === totalPages.value);
-const totalPosts = computed(() => posts.meta.total || 0);
-const from = computed(() => posts.meta.from || 0);
-const to = computed(() => posts.meta.to || 0);
+  } catch (error) {
+    console.error('Error fetching posts:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const totalPages = computed(() => posts.meta.last_page || 1)
+const hasNextPage = computed(() => !!posts.links.next)
+const hasPrevPage = computed(() => !!posts.links.prev)
+const isFirstPage = computed(() => currentPage.value === 1)
+const isLastPage = computed(() => currentPage.value === totalPages.value)
+const totalPosts = computed(() => posts.meta.total || 0)
+const from = computed(() => posts.meta.from || 0)
+const to = computed(() => posts.meta.to || 0)
 
 const goToPage = (page) => {
   if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
-    getPosts(page);
+    getPosts(page)
   }
-};
+}
 
 const goToNextPage = () => {
   if (hasNextPage.value) {
-    getPosts(currentPage.value + 1);
+    getPosts(currentPage.value + 1)
   }
-};
+}
 
 const goToPrevPage = () => {
   if (hasPrevPage.value) {
-    getPosts(currentPage.value - 1);
+    getPosts(currentPage.value - 1)
   }
-};
+}
 
 const pageNumbers = computed(() => {
-  const pages = [];
-  const maxVisiblePages = 5;
-  let startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2));
-  let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1);
+  const pages = []
+  const maxVisiblePages = 5
+  let startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2))
+  let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1)
 
   if (endPage - startPage + 1 < maxVisiblePages) {
-    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    startPage = Math.max(1, endPage - maxVisiblePages + 1)
   }
 
   for (let i = startPage; i <= endPage; i++) {
-    pages.push(i);
+    pages.push(i)
   }
 
-  return pages;
-});
+  return pages
+})
 
 onMounted(() => {
-  getPosts(1);
-});
+  getPosts(1)
+})
 </script>
 
 <template>
@@ -90,17 +91,12 @@ onMounted(() => {
         </div>
 
         <div v-else class="posts-list">
-          <div v-if="posts.data.length === 0" class="empty-state">
-            <h3>Пока нет постов</h3>
-            <p>Будьте первым, кто опубликует что-то интересное!</p>
-          </div>
-
           <div v-for="post in posts.data" :key="post.id" class="post-card">
             <div class="post-header">
               <h2 class="post-title">{{ post.title }}</h2>
               <div v-if="post.author" class="post-author">
-                <div class="author-avatar">
-                  {{ post.author.login.charAt(0).toUpperCase() }}
+                <div class="">
+                  <img class="author-avatar" :src="post.author.avatar" alt="">
                 </div>
                 <div class="author-info">
                   <span class="author-login">@{{ post.author.login }}</span>
@@ -108,7 +104,6 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-
             <div class="post-description">
               <p>{{ post.description }}</p>
             </div>
@@ -127,17 +122,28 @@ onMounted(() => {
                 <span class="meta-value slug">{{ post.slug }}</span>
               </div>
             </div>
+            <p>лайкнули {{ post.liked_by.length }}</p>
+            <ul v-for="liked in post.liked_by ">
+              <li>имя {{ liked.name}}</li>
+              <li>дата {{ liked.liked_at}}</li>
+            </ul>
 
             <div class="post-actions">
               <button class="btn btn-primary">Читать далее</button>
-              <button class="btn btn-secondary">Лайк</button>
+              <button class="btn btn-secondary">Лайк {{ post.liked_by.length }}</button>
               <button class="btn btn-outline">Поделиться</button>
             </div>
+          </div>
+
+          <div v-if="posts.data.length === 0" class="empty-state">
+            <h3>Пока нет постов</h3>
+            <p>Будьте первым, кто опубликует что-то интересное!</p>
           </div>
         </div>
 
 
-        <div v-if="!loading && posts.data.length > 0 && totalPages > 1" class="pagination align-items-center">
+        <div v-if="!loading && posts.data.length > 0 && totalPages > 1"
+             class="pagination align-items-center">
           <div class="pagination-info">
             Показано с {{ from }} по {{ to }} из {{ totalPosts }} постов
           </div>
@@ -414,6 +420,7 @@ onMounted(() => {
   background: #3498db;
   color: white;
 }
+
 .empty-state {
   text-align: center;
   padding: 60px 20px;

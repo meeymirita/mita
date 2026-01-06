@@ -31,6 +31,7 @@ class UpdateUserRequest extends FormRequest
             'email' => ['nullable', 'email:rfc,dns', 'max:255',
                 Rule::unique('users', 'email')->ignore($userId),
             ],
+            'avatars' => 'nullable|file|mimes:jpeg,png,jpg,svg,webp|max:5000',
         ];
     }
 
@@ -40,7 +41,8 @@ class UpdateUserRequest extends FormRequest
         return [
             'name.unique' => 'Такое имя уже существует',
             'login.unique' => 'Такой логин уже существует',
-            'email.unique' => 'Такой email уже существует'
+            'email.unique' => 'Такой email уже существует',
+            'avatars.image' => 'не то разрешение'
         ];
     }
 }
