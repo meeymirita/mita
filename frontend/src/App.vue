@@ -1,7 +1,11 @@
+<script setup>
+
+</script>
+
 <template>
-  <RouterView />
+  <header>header</header>
+  <main>main</main>
+  <footer>footer</footer>
 </template>
 
-
-<script setup lang="ts">
-</script>
+<style scoped></style>
