@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue';
-import apiClient from '@/api/axios';
+import apiClient from '@/api/axios.js';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const form = reactive({

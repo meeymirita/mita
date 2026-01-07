@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue';
-import apiClient from '@/api/axios';
+import apiClient from '@/api/axios.js';
 
 const form = reactive({
   email: '',

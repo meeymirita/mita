@@ -3,7 +3,7 @@ import { ref, onMounted, watch, onUnmounted,computed  } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNotificationStore } from '@/stores/notification.js'
 import VuePictureCropper, { cropper } from 'vue-picture-cropper'
-import apiClient from '@/api/axios'
+import apiClient from '@/api/axios.js'
 
 const notification = useNotificationStore()
 
@@ -40,6 +40,7 @@ const fetchUserData = async () => {
   try {
     const response = await apiClient.get('/user/me')
     user.value = response.data.data
+    console.log(user.value)
     localUser.value = { ...response.data.data }
     hasChanges.value = false
 
@@ -833,7 +834,6 @@ const startTimer = (minutes = 1) => {
 }
 .user-profile {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
 }
 
