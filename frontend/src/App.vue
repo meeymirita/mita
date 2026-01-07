@@ -1,7 +1,12 @@
+<script setup>
+const currentDate = new Date().toLocaleDateString()
+</script>
+
 <template>
-  <RouterView />
+  <div>
+    {{ currentDate }}
+  </div>
 </template>
 
+<style scoped></style>
 
-<script setup lang="ts">
-</script>
