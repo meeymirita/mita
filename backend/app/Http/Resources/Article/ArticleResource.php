@@ -42,7 +42,7 @@ class ArticleResource extends JsonResource
                         'id' => $this->user->id,
                         'login' => $this->user->login,
                         'type' => $this->user->type,
-//                        'avatar' => $this->user->getUserAvatar($this->user->avatar->path)
+                        'avatar' => $this->user->getFirstMediaUrl('avatars')
                     ];
                 },
                 default: []
