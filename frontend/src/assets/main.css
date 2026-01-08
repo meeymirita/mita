@@ -1,35 +1,20 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+:root {
+  --color-primary: #FFFFFF;
+  --color-bg: #343D4B;
+  --color-primary-inverted: #000000;
+  --color-bg-card: #272E37;
+  --color-bg-main: #222831;
+  --gradient: linear-gradient(91deg, rgba(144,217,224,0.9) 0.2%, rgba(84, 96, 230, 0.9) 100%);
+  --gradient-inverted: linear-gradient(256deg, rgba(144,217,224,0.9) 9.04%, rgba(84, 96, 230, 0.9) 92.2%);
+  --font: "Montserrat";
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+body{
+  font-family: var(--font), sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
