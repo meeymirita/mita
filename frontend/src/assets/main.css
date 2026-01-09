@@ -1,6 +1,7 @@
 :root {
   --color-primary: #FFFFFF;
   --color-bg: #343D4B;
+  --color-text-placeholder: #3F4958;
   --color-primary-inverted: #000000;
   --color-bg-card: #272E37;
   --color-bg-main: #222831;
@@ -8,7 +9,9 @@
   --gradient-inverted: linear-gradient(256deg, rgba(144,217,224,0.9) 9.04%, rgba(84, 96, 230, 0.9) 92.2%);
   --font: "Montserrat";
 }
-
+*{
+  box-sizing: border-box;
+}
 body{
   font-family: var(--font), sans-serif;
   background-color: var(--color-bg);
