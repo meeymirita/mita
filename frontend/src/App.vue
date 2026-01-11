@@ -1,80 +1,84 @@
 <script setup>
-import { ref, reactive, nextTick, computed } from 'vue'
+import { ref,provide,watch,onMounted } from 'vue'
 import axios from 'axios'
-import Stat from '@/components/Stat/Stat.vue'
-import CitySelect from '@/components/Button/CitySelect.vue'
-import Error from '@/components/Error/Error.vue'
-import DayCard from '@/components/Card/DayCard.vue'
-
-const API_ENDPOINT = 'http://api.weatherapi.com/v1'
+import PaneRight from '@/components/Panel/PaneRight.vue'
+import { cityProvide, API_ENDPOINT } from '@/constans.js'
+import PaneLeft from '@/components/Panel/PaneLeft.vue'
 
 let data = ref()
-const errorMap = new Map(
-  [
-    [
-      400, 'Указанный город не найден'
-    ]
-  ]
-)
 // тут лежит статус 400
-const errorMessage = ref();
+const errorMessage = ref()
 
-const errorDisplay = computed(() => {
-  // из мапы берем элемент по errorMessage.value который 400 при ошибке
-  return errorMap.get(errorMessage.value)
+const activeIndex = ref(0)
+
+const city = ref('Москва')
+provide(cityProvide, city)
+
+
+watch(city, () => {
+  getSity(city.value)
 })
-const dataModified = computed((prev) => {
-  if (!data.value) return []
-  return [
-    {
-      label: 'Влажность',
-      stat: data.value.current.humidity + " %"
-    },
-    {
-      label: 'Облачность',
-      stat: data.value.current.cloud + " %"
-    },
-    {
-      label: 'Ветер',
-      stat: data.value.current.wind_kph + " км/ч"
-    }
 
-  ]
+onMounted(() => {
+  getSity(city.value)
 })
 async function getSity(city) {
-  try{
+  try {
     const params = new URLSearchParams({
       q: city,
       lang: 'ru',
       key: '3cd843a1001e4071b6d21048261001',
       aqi: 'yes',
-      days: '3',
+      days: '4'
     })
     const res = await axios.get(API_ENDPOINT + '/forecast.json?' + params.toString())
     data.value = res.data
-    console.log(data.value.forecast.forecastday)
     errorMessage.value = null
-  } catch (error){
+  } catch (error) {
     data.value = null
     errorMessage.value = error.status // уходит стаутс 400
   }
 }
+
 </script>
 <template>
   <main class="main">
-
-    <DayCard :weather-code="1000" :temp="30" :date="new Date()" />
-    <error :message="errorDisplay" />
-    <Stat v-for="item in dataModified" v-bind="item" :key="item.label" />
-    <CitySelect @select-city="getSity" />
+    <div class="left">
+      <PaneLeft v-if="data"
+        :dayData="data.forecast.forecastday[activeIndex]"
+        :activeIndex="activeIndex"
+      />
+    </div>
+    <div class="right">
+      <PaneRight
+        :data="data"
+        :errorMessage="errorMessage"
+        :active-index="activeIndex"
+        @select-index="(i) => activeIndex = i"
+      />
+    </div>
   </main>
 </template>
 
 <style scoped>
-.main {
+.main{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.right {
   background: var(--color-bg-main);
-  padding: 60px 50px;
-  border-radius: 25px;
+  padding: 44px 70px;
+  border-radius: 25px 25px 25px 25px;
+}
+
+.left {
+  width: 500px;
+  height: 660px;
+  border-radius: 30px;
+  background-image: url("/public/bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 </style>
 

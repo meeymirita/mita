@@ -1,20 +1,19 @@
 <script setup>
-import { ref, onMounted} from 'vue'
+import { ref,inject} from 'vue'
 import Button from '@/components/Button/Button.vue'
 import IconLocation from '@/icons/IconLocation.vue'
 import InputSearch from '@/components/Input/InputSearch.vue'
+import { cityProvide } from '@/constans.js'
+
+const city = inject(cityProvide)
+const inputValue = ref(city.value)
 
 const isEdited = ref(false)
-const city = ref('Moscow')
-const emit = defineEmits(['selectCity'])
-
-onMounted(() => {
-  emit('selectCity', city.value)
-})
 
 function select() {
   isEdited.value = false
-  emit('selectCity', city.value)
+  city.value = inputValue.value
+
 }
 
 function edit() {
@@ -27,9 +26,10 @@ function edit() {
   <div class="city-select">
     <div class="city-input" v-if="isEdited">
       <input-search
+        v-focus
         @keyup.enter="select"
         placeholder="Введите город"
-        v-model="city"
+        v-model="inputValue"
       />
       <Button @click="select()">
         Сохранить

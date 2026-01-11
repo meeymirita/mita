@@ -17,7 +17,7 @@ const { message } = defineProps({
   text-align: center;
   background: var(--color-bg-card);
   border-radius: 0px 0px 25px 25px;
-  margin-top: -60px;
+  margin-top: -44px;
   margin-bottom: 60px;
 }
 </style>

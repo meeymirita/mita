@@ -2,22 +2,32 @@
 import IconSun from '@/icons/weather/IconSun.vue'
 import IconRain from '@/icons/weather/IconRain.vue'
 import IconCloud from '@/icons/weather/IconCloud.vue'
+import { computed } from 'vue'
+// будет варн если убрать
+defineEmits(['click'])
 
-const { weatherCode, temp, date } = defineProps({
+const { weatherCode, temp, date, isActive } = defineProps({
   weatherCode: Number,
   temp: Number,
-  date: Date
+  date: Date,
+  isActive: Boolean
+})
+
+const iconColor = computed(() => {
+   return isActive ? 'var(--color-primary-inverted)' : 'var(--color-primary)';
 })
 </script>
 
 <template>
-  <button class="day-card">
-    <IconSun v-if="weatherCode === 1000" size="55" color="red" />
-    <IconRain v-if="weatherCode === 1009" size="55" color="red" />
-    <IconCloud v-if="weatherCode === 2003" size="55" color="red" />
+  <button class="day-card" :class="{active: isActive}" @click="$emit('click')">
+    <IconSun v-if="weatherCode <= 1003" :size="55"
+             :color="iconColor"
+    />
+    <IconRain v-if="weatherCode >= 1006 && weatherCode < 1063" :size="55" :color="iconColor" />
+    <IconCloud v-if="weatherCode >= 1063" :size="55" :color="iconColor" />
 
     <span class="day-card__day">
-      {{ date.toLocaleDateString('ru-RU', {weekday: 'short'}) }}
+      {{ date.toLocaleDateString('ru-RU', { weekday: 'short' }) }}
     </span>
     <span class="day-card__temp">
       {{ temp }} °C
@@ -28,6 +38,7 @@ const { weatherCode, temp, date } = defineProps({
 
 <style scoped>
 .day-card {
+  width: 100%;
   border-radius: 10px;
   box-shadow: 1px 2px 4px 0px #222831;
   color: var(--color-primary);
@@ -41,12 +52,20 @@ const { weatherCode, temp, date } = defineProps({
   border: none;
   cursor: pointer;
 }
-.day-card:hover{
+
+.active {
+  background: var(--color-primary);
+  color: var(--color-primary-inverted);
+}
+
+.day-card:not(.active):hover {
   background-color: #3a434f;
 }
+
 .day-card__day {
   font-size: 20px;
 }
+
 .day-card__temp {
   font-size: 20px;
   font-weight: 700;

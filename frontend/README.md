@@ -517,7 +517,7 @@ type: String, required: true, default: "default"
 />
 
 ```
-### 14 - <a href="https://ru.vuejs.org/guide/essentials/lifecycle">Lifecycle Hooks</a> Жизненный цикл компонентов в Vue
+### 15 - <a href="https://ru.vuejs.org/guide/essentials/lifecycle">Lifecycle Hooks</a> Жизненный цикл компонентов в Vue
 
 Жизненный цикл компонента:
 1)  **setup:**
@@ -564,8 +564,7 @@ console.log('city select before mounted')
 
 **Хуки размонтирования:**
 - onUnmount: Активируется, когда компонент удаляется из DOM. Компонент не размонтируется при использовании v-show, а просто скрывается. v-if, в отличие от v-show, позволяет полное удаление компонента, обеспечивая выполнение onUnmount.
-
-### 14 - <a href="https://ru.vuejs.org/guide/essentials/lifecycle">watch</a> позволяет отслеживать изменения конкретного источника 
+### 16 - <a href="https://ru.vuejs.org/guide/essentials/lifecycle">watch</a> позволяет отслеживать изменения конкретного источника 
 
 **Цикл обновления и ограниченность onUpdatedHook:**
 - Использование onUpdatedHook может показаться удобным для отслеживания изменений, но он реагирует на любые изменения в компоненте, а не только на целевое состояние (например, город).
@@ -616,3 +615,93 @@ onWatcherCleanup(() => {
 **Отмена Watch:**
 - Watch возвращает функцию, позволяющую отменить актуальность отслеживания при необходимости.
 - Рекомендация: минимизировать использование отмены, если watch и watchEffect находятся на верхнем уровне.
+
+
+### 17 - Создание своиx директив
+
+**Что такое директива:**
+Это объект, позволяющий привязываться к жизненным циклам элемента, на который она применяется.
+
+
+**Привязывание к событиям:**
+Используем событие ```mounted``` для выполнения фокусировки элемента после его монтирования.
+
+**Регистрация директивы:**
+
+**Локально:** определить директиву прямо в компоненте. Начинаются с ```v```
+```vue
+const vFocus = {
+  mounted: (el) => el.focus(),
+}
+Вызов на компоненте v-focus
+<input-search v-focus />
+```
+**Глобально:** зарегистрировать директиву в main.js, чтобы использовать во всем приложении. Используйте app.directive('focus', {...}).
+
+```vue
+import './assets/main.css'
+import { createApp } from 'vue'
+import App from './App.vue'
+
+const app = createApp(App)
+
+Уже не в компоненте а глобально чтоб переиспользовать
+app.directive('focus', {
+  mounted: (el) => el.focus()
+})
+
+app.mount('#app')
+```
+### 18 - <a href="https://vuejs.org/guide/components/provide-inject.html">Provide / Inject</a> 
+**Provide:** функция для предоставления данных на высокоуровневом компоненте, где данные генерируются.
+
+**Inject:** функция для получения данных в низкоуровневом компоненте, которому данные нужны.
+Позволяет избежать ненужной передачи данных через промежуточные компоненты.
+
+На картинке из рут мы прокидываем в любой дочерний компонент
+
+<img width="800px" src="https://vuejs.org/assets/provide-inject.C0gAIfVn.png">
+
+**Пример:** ```App.vue```
+
+Тут отправляем 1
+
+```vue
+provide('num', 1)
+```
+
+**Получаем:** ``` App/PaneRight/CitySelect.vue```
+```vue
+const num = inject('num')
+console.log('из апп вью в компонент' + ' ' +num)
+```
+
+**Использование символов вместо строк для ключей**
+
+- Символы всегда уникальны, даже если они имеют одинаковый дескриптор, что предотвращает коллизии.
+- Для хранения символов создайте отдельный файл, например, constants.js.
+- В constants.js экспортируются символы, например, export const CityProvide = Symbol('City');.
+- Можно также вынести в отдельные файлы другие константы, такие как API endpoints.
+- Импортируйте их в нужных местах для улучшения структуры кода.
+
+**Пример выше уже на Symbol('City')**
+
+**Пример:** ```App.vue```
+
+Тут отправляем 
+
+```vue
+import { cityProvide } from '@/constans.js' => Вернёт = export const cityProvide = Symbol('city')
+
+provide(cityProvide, city)
+```
+
+**Получаем:** ``` App/PaneRight/CitySelect.vue```
+```vue
+import { cityProvide } from '@/constans.js'
+
+const city = inject(cityProvide)
+console.log('из апп вью в компонент' + ' ' +num)
+```
+
+**Таким образом, символы обеспечивают уникальность и предотвращают возможные конфликты в проекте.**
