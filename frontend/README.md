@@ -1,30 +1,48 @@
-Заметки функций из уроков
+# vue-project
 
+This template should help get you started developing with Vue 3 in Vite.
 
-v-html
-v-html позволяет вставить html
-https://vuejs.org/api/built-in-directives.html#v-html
+## Recommended IDE Setup
 
-2 - Биндинг стилей
-https://vuejs.org/guide/essentials/class-and-style.html#class-and-style-bindings
-const colorRed = 'red'
-:style="{color:colorRed}"
+[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-3 - try/false в шаблоне
-const isAdmin = true
-<main>{{isAdmin ? 'adm' : 'no' }}</main>
-еще больший пример из доки 
-const colorRed = 'red'
-const user = {
-    "admin": {
-        "value": true,
-        "font": 25,
-    },
-}
-const isAdmin = user.admin.value
-<main
-  :style="{color:colorRed, fontSize: user.admin.font + 'px'}"
-  :class="`color-${colorRed}`"
->
-  {{isAdmin ? 'adm' : 'no' }}
-</main>
+## Recommended Browser Setup
+
+- Chromium-based browsers (Chrome, Edge, Brave, etc.):
+  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
+- Firefox:
+  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
+  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+
+## Type Support for `.vue` Imports in TS
+
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vite.dev/config/).
+
+## Project Setup
+
+```sh
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+### Type-Check, Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```
