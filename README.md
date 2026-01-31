@@ -51,7 +51,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 #### nvm работает
-nvm --version  # Должно показать версию, например 0.39.0
+nvm --version 
 
 #### 8  Node.js
 nvm use 24
