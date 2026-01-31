@@ -1,4 +1,4 @@
-FROM php:8.4-fpm
+FROM dockerhub.timeweb.cloud/library/php:8.4-fpm
 
 # Устанавливаем необходимые пакеты + supervisor
 RUN apt-get update && apt-get install -y \
