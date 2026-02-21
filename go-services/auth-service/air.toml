@@ -1,0 +1,9 @@
+root = "/app"
+tmp_dir = "tmp"
+
+[build]
+pre_cmd = ["mkdir", "-p", "/app/tmp"]
+entrypoint = ["/app/tmp/main"]
+
+[run]
+cmd = "/app/tmp/main"

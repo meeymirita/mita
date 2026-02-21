@@ -2,8 +2,8 @@
 
 namespace App\Services\User;
 
-use App\Events\VerificationCodeMailEvent;
 use App\Models\User;
+use App\Rabbit\User\SendUserCodeRabbitPublisher;
 use Carbon\Carbon;
 use Random\RandomException;
 
@@ -22,7 +22,8 @@ class VerificationService
         $code = $user->generateVerificationCode();
 
         try {
-            VerificationCodeMailEvent::dispatch($user, $code);
+            app(SendUserCodeRabbitPublisher::class)->sendVerification($user, $code);
+//            VerificationCodeMailEvent::dispatch($user, $code);
             \Log::info('code sent', ['user_id' => $user->id]);
             return true;
         } catch (\Exception $exception) {
@@ -58,7 +59,6 @@ class VerificationService
 
         // Время когда можно отправить повторно (время отправки + 1 минута)
 
-
         $canResendAt = $codeSentAt->addMinutes(self::RESEND_TIMEOUT_MINUTES);
 
         // Если сейчас время меньше времени повторной отправки
@@ -71,7 +71,6 @@ class VerificationService
 
         return $this->sendVerificationCode($user);
     }
-
 
     /**
      * Подтверждение кода

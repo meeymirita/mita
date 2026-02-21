@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\User\RegisterAndLoginUserResponseResource;
-use App\Http\Resources\User\RegisterResponseResource;
 use App\Http\Resources\User\UserResource;
 use App\Services\User\UpdateService;
 use Dotenv\Exception\ValidationException;

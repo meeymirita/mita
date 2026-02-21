@@ -235,17 +235,20 @@ services:
       <<: *healthcheck-defaults
       start_period: 10s
 
-  go_service_init:
+  auth-service:
     build:
-      context: ./go-services/service-init
+      context: ./go-services/auth-service
       dockerfile: Dockerfile
-    container_name: go_service_init
+    container_name: auth-service
     ports:
       - "8082:8080"
     volumes:
-      - ./go-services/service-init:/app
+      - ./go-services/auth-service:/app
     networks:
       - app-network
+
+
+
 
 volumes:
   grafana-data:
