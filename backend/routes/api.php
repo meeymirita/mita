@@ -57,16 +57,6 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 //https://github.com/levskiy0/laravel-long-polling
 });
 
-Route::prefix('article')->name(value: 'article.')->group(callback: function () {
-    Route::get(uri: '/', action: [ArticleController::class, 'index']);
-});
-Route::get('/article_like', function () {
-
-    $post = Article::find(1);
-    return response()->json($post->likes);
-
-});
-// тест
 // Тестовый роут для проверки очереди
 Route::get('/get_user/{id}', function ($id) {
     return Cache::get("users:user_{$id}");

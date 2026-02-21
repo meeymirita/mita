@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Rabbit;
+namespace App\Rabbit\User;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class RabbitPublisher
+class SendUserCodeRabbitPublisher
 {
     public function sendVerification($user, $code)
     {
