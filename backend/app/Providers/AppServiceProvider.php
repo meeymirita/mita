@@ -2,12 +2,10 @@
 
 namespace App\Providers;
 
-use App\Contracts\Article\ArticleIndexPageInterface;
 use App\Contracts\User\AuthUserInterface;
 use App\Contracts\User\PasswordResetUserInterface;
 use App\Contracts\User\UpdateUserInterface;
 use App\Contracts\User\UserCreateInterface;
-use App\Services\Article\ArticleIndexPageService;
 use App\Services\User\AuthService;
 use App\Services\User\PasswordResetService;
 use App\Services\User\UpdateService;
@@ -40,13 +38,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             abstract: PasswordResetUserInterface::class,
             concrete: PasswordResetService::class
-        );
-        /**
-        *  Article Interface
-        */
-        $this->app->bind(
-            abstract: ArticleIndexPageInterface::class,
-            concrete: ArticleIndexPageService::class
         );
     }
 

@@ -23,7 +23,6 @@ class VerificationService
 
         try {
             app(SendUserCodeRabbitPublisher::class)->sendVerification($user, $code);
-//            VerificationCodeMailEvent::dispatch($user, $code);
             \Log::info('code sent', ['user_id' => $user->id]);
             return true;
         } catch (\Exception $exception) {

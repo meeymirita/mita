@@ -9,6 +9,8 @@ import (
 	"auth-service/internal/queue"
 )
 
+const queueName = "reset_password_queue"
+
 func main() {
 	conn, ch, err := queue.ConnectRabbit()
 	if err != nil {
@@ -17,39 +19,35 @@ func main() {
 	defer conn.Close()
 	defer ch.Close()
 
-	q, err := ch.QueueDeclare("emails_queue", true, false, false, false, nil)
+	q, err := ch.QueueDeclare(queueName, true, false, false, false, nil)
 	if err != nil {
 		log.Fatal("QueueDeclare:", err)
 	}
-	
 
-	// Prefetch 1 — консьюмер готов получать сообщения (в Docker без этого иногда не стартует приём)
 	if err := ch.Qos(1, 0, false); err != nil {
 		log.Fatal("Qos:", err)
 	}
-	log.Println("Очередь", q.Name);
+	log.Println("Очередь", q.Name)
 	msgs, err := ch.Consume(q.Name, "", false, false, false, false, nil)
 	if err != nil {
 		log.Fatal("Consume:", err)
 	}
+
 	for d := range msgs {
-
-		var msg models.VerificationMessage
-
+		var msg models.ResetPasswordMessage
 		if err := json.Unmarshal(d.Body, &msg); err != nil {
 			log.Println(err)
 			d.Nack(false, false)
 			continue
 		}
 
-		if err := email.SendEmail(msg.Email, msg.Code, msg.Subject, msg.HTML); err != nil {
+		if err := email.SendEmail(msg.Email, "", msg.Subject, msg.HTML); err != nil {
 			log.Println(err)
 			d.Nack(false, true)
 			continue
 		}
 
 		d.Ack(false)
-
-		log.Println("sent →", msg.Email)
+		log.Println("reset link sent →", msg.Email)
 	}
 }

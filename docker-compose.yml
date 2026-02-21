@@ -240,15 +240,22 @@ services:
       context: ./go-services/auth-service
       dockerfile: Dockerfile
     container_name: auth-service
-    ports:
-      - "8082:8080"
+    command: ["air", "--build.cmd=go build -o /app/tmp/main ./cmd/send-code", "--build.entrypoint=/app/tmp/main"]
     volumes:
       - ./go-services/auth-service:/app
     networks:
       - app-network
 
-
-
+  auth-service-reset:
+    build:
+      context: ./go-services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service-reset
+    command: ["air", "--build.cmd=go build -o /app/tmp/main ./cmd/send-reset-password-link", "--build.entrypoint=/app/tmp/main"]
+    volumes:
+      - ./go-services/auth-service:/app
+    networks:
+      - app-network
 
 volumes:
   grafana-data:

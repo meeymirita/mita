@@ -4,7 +4,7 @@ namespace App\Services\User;
 
 
 use App\Contracts\User\PasswordResetUserInterface;
-use App\Events\SendResetLinkEvent;
+use App\Rabbit\User\SendResetLinkPasswordPublisher;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class PasswordResetService implements PasswordResetUserInterface
 {
-    private const TOKEN_LIFETIME_MINUTES = 60;
+    private const TOKEN_LIFETIME_MINUTES = 30;
 
     /**
      * @return array{success: true, token: string}
@@ -33,8 +33,7 @@ class PasswordResetService implements PasswordResetUserInterface
         $this->setTokenUser($user, $token);
 
         try {
-            // отправка письма с токеном
-            SendResetLinkEvent::dispatch($user, $token);
+            app(SendResetLinkPasswordPublisher::class)->sendResetLink($user, $token);
 
             return ['success' => true, 'token' => $token];
 

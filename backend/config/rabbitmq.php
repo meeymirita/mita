@@ -42,6 +42,7 @@ return [
         'laravel_queue' => env('RABBITMQ_QUEUE', 'laravel_queue'),
 
         'email' => 'emails_queue',
+        'reset_password' => 'reset_password_queue',
     ],
 
     /*

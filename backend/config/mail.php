@@ -115,4 +115,17 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Verification email (Blade template URLs for HTML sent via Go)
+    |--------------------------------------------------------------------------
+    | Absolute URLs for images and frontend link in verification.blade.php.
+    | If not set in .env, fallback to asset() so images must be in public/storage.
+    */
+    'verification' => [
+        'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'https://meeymirita.ru')),
+        'sakura_url' => '/storage/images/image_to_email/sakura.png' ?? null,
+        'himary_url' => '/storage/images/image_to_email/himary.jpg' ?? null,
+    ],
+
 ];

@@ -1,16 +1,14 @@
 <?php
 
-use App\Http\Controllers\Article\ArticleController;
 use App\Http\Controllers\User\ResetPasswordController;
 use App\Http\Controllers\User\SendVerificationCodeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\VerifyEmailController;
 use App\Http\Resources\User\UserResource;
-use App\Models\Article;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-
+use App\Rabbit\User\SendUserCodeRabbitPublisher;
 //  без защиты
 Route::prefix('user')->name('user.')->group(callback: function () {
     //ругистрация с отправкой письма на почту для подтверждения её
@@ -57,7 +55,29 @@ Route::prefix('user')->name('user.')->group(callback: function () {
 //https://github.com/levskiy0/laravel-long-polling
 });
 
-// Тестовый роут для проверки очереди
+// Тестовый роут для проверки очереди (нагрузка: одно соединение, N сообщений)
+
+Route::get('/test-rabbitmq-mass', function () {
+    $user = \App\Models\User::first();
+    if (!$user) {
+        return response()->json(['error' => 'Нет пользователей в БД'], 404);
+    }
+
+    $count = (int) request('count', 150000);
+    $count = min(max(1, $count), 10_000);
+
+    $start = microtime(true);
+    app(SendUserCodeRabbitPublisher::class)->sendVerificationBatch($user, '123456', $count);
+    $elapsed = round(microtime(true) - $start, 2);
+
+    return response()->json([
+        'message' => 'Сообщения отправлены в очередь',
+        'count' => $count,
+        'elapsed_sec' => $elapsed,
+        'url' => '/api/test-rabbitmq-mass?count=' . $count,
+    ]);
+});
+
 Route::get('/get_user/{id}', function ($id) {
     return Cache::get("users:user_{$id}");
 });

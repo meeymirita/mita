@@ -16,7 +16,6 @@ class SendVerificationCodeController extends Controller
 
     /**
      * Отправка кода подтверждения
-     *
      */
     public function sendCode(Request $request) : JsonResponse
     {

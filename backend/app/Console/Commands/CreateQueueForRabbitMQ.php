@@ -59,8 +59,8 @@ class CreateQueueForRabbitMQ extends Command
 
             $queuesToCreate = [
                 'laravel_queue',
-                'emails_queue',
-                'media_queue'
+                'emails_queue',           // Go: код верификации
+                'reset_password_queue',   // Go: ссылка сброса пароля
             ];
             $createdQueues = [];
             foreach ($queuesToCreate as $queueName) {
