@@ -131,7 +131,10 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: 6379
+      REDIS_PREFIX: ${REDIS_PREFIX:-}
       REDIS_CLIENT: predis
+      REDIS_DB: ${REDIS_DB}
+      REDIS_CACHE_DB: ${REDIS_CACHE_DB}
 
       BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
@@ -244,6 +247,7 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: ${REDIS_DB}
     volumes:
       - ./go-services/auth-service:/app
     networks:
@@ -262,6 +266,7 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: ${REDIS_DB}
     volumes:
       - ./go-services/auth-service:/app
     networks:

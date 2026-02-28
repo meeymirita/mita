@@ -6,11 +6,11 @@ use App\Models\User;
 use App\Rabbit\User\SendUserCodeRabbitPublisher;
 use Carbon\Carbon;
 use Random\RandomException;
-
+use Illuminate\Support\Facades\Redis;
 class VerificationService
 {
 
-    private const CODE_LIFETIME_MINUTES = 5;
+    private const CODE_LIFETIME_MINUTES = 1;
     private const RESEND_TIMEOUT_MINUTES = 1;
 
     /**
@@ -20,7 +20,6 @@ class VerificationService
     {
         try {
             app(SendUserCodeRabbitPublisher::class)->sendVerification($user);
-            \Log::info('code sent', ['user' => $user]);
             return true;
         } catch (\Exception $exception) {
             \Log::error('Failed to send verification code', [
@@ -62,19 +61,14 @@ class VerificationService
         return $this->sendVerificationCode($user);
     }
 
-    /**
-     * Подтверждение кода
-     * @param User $user
-     * @param string $code
-     * @return bool
-     */
-    public function verifyCode(User $user, string $code): bool
+    public function verifyCode(User $user, string $user_code): bool
     {
-        if (!$user->verifyCode($code)) {
-            return false;
+        $send_code = Redis::connection('verification')->get('verification_code:' . $user->id);
+        if ($send_code === $user_code) {
+            Redis::connection('verification')->del('verification_code:' . $user->id);
+            $user->markEmailAsVerified();
+            return true;
         }
-
-        $user->markEmailAsVerified();
-        return true;
+        return false;
     }
 }

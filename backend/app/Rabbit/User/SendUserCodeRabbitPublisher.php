@@ -2,7 +2,6 @@
 
 namespace App\Rabbit\User;
 
-use Illuminate\Support\Facades\View;
 use PhpAmqpLib\Message\AMQPMessage;
 use App\Services\RabbitMQ\RabbitMQConnection;
 
@@ -25,7 +24,6 @@ class SendUserCodeRabbitPublisher
 
         $connection = $this->rabbitMQConnection->createConnection();
         try {
-
             $channel = $connection->channel();
             $channel->queue_declare($queueName, false, true, false, false);
             
@@ -34,7 +32,6 @@ class SendUserCodeRabbitPublisher
                 'user_id' => $user->id,
                 'type' => 'email_verification',
             ]);
-
             $channel->basic_publish(new AMQPMessage($payload), '', $queueName);
         } finally {
             if (isset($channel)) {

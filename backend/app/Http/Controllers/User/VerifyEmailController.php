@@ -20,31 +20,20 @@ class VerifyEmailController extends Controller
     public function verify(Request $request): JsonResponse
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'code' => 'required|string|size:6'
+            'user_id' => 'required|integer|exists:users,id',
+            'user_code' => 'required|string|size:6'
         ]);
-
-        $user = User::query()->where('email', $request->get('email'))->first();
-
-        if ($user->hasVerifiedEmail()) {
+        $user = User::query()->where('id', $request->get('user_id'))->first();
+        $is_verified = $this->verificationService->verifyCode(user: $user, user_code: $request->get('user_code'));
+        if ($is_verified) {
             return response()->json([
-                'success' => false,
-                'message' => 'Email уже подтвержден'
-            ], 400);
-        }
-
-        $verification = $this->verificationService->verifyCode($user, $request->code);
-        if (!$verification) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Неверный или просроченный код'
-            ], 400);
-        }
-
+                'success' => true,
+                'message' => 'Email успешно подтвержден',
+            ]);
+        } 
         return response()->json([
-            'success' => true,
-            'message' => 'Email успешно подтвержден',
-            'token' => $user->token
-        ]);
+            'success' => false,
+            'message' => 'Неверный или просроченный код'
+        ], 400);
     }
 }

@@ -99,8 +99,6 @@ class User extends Authenticatable implements HasMedia
         $this->update([
             'email_verified_at' => now(),
             'status' => UserStatus::Active->value,
-            'verification_code' => null,
-            'verification_code_expires_at' => null,
         ]);
     }
     /**
