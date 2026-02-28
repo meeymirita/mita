@@ -7,25 +7,18 @@ import (
 	"net/smtp"
 )
 
-func SendEmail(to string, code string, subject string, html string) error {
+func SendEmail(to string) error {
 	from := "noreply@meeymirita.ru"
 	host := "mailpit"
 	port := "1025"
 	addr := host + ":" + port
 
-	if subject == "" {
-		subject = "Код подтверждения"
-	}
-	subjectEnc := "=?UTF-8?B?" + base64.StdEncoding.EncodeToString([]byte(subject)) + "?="
+	
+	subjectEnc := "=?UTF-8?B?" + base64.StdEncoding.EncodeToString([]byte("Code")) + "?="
 
 	var body []byte
 	contentType := "text/plain; charset=UTF-8"
-	if html != "" {
-		contentType = "text/html; charset=UTF-8"
-		body = []byte(html)
-	} else {
-		body = []byte("Your code: " + code)
-	}
+	
 
 	buf := bytes.NewBuffer(nil)
 	buf.WriteString("From: " + from + "\r\n")

@@ -27,10 +27,10 @@ func main() {
 	if err := ch.Qos(1, 0, false); err != nil {
 		log.Fatal("Qos:", err)
 	}
-	log.Println("Очередь", q.Name)
+	// log.Println("Очередь", q.Name)
 	msgs, err := ch.Consume(q.Name, "", false, false, false, false, nil)
 	if err != nil {
-		log.Fatal("Consume:", err)
+		// log.Fatal("Consume:", err)
 	}
 
 	for d := range msgs {
@@ -48,6 +48,6 @@ func main() {
 		}
 
 		d.Ack(false)
-		log.Println("reset link sent →", msg.Email)
+		// log.Println("reset link sent →", msg.Email)
 	}
 }

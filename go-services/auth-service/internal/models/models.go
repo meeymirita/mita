@@ -3,10 +3,8 @@ package models
 
 type VerificationMessage struct {
     Email   string `json:"email"`
-    Code    string `json:"code"`
     UserID  int    `json:"user_id"`
-    Subject string `json:"subject"`
-    HTML    string `json:"html"`   
+    Type    string `json:"type"`
 }
 
 // ResetPasswordMessage — сообщение для письма со ссылкой сброса пароля (очередь reset_password_queue)

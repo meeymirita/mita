@@ -21,7 +21,6 @@ func main() {
 	if err != nil {
 		log.Fatal("QueueDeclare:", err)
 	}
-	
 
 	// Prefetch 1 — консьюмер готов получать сообщения (в Docker без этого иногда не стартует приём)
 	if err := ch.Qos(1, 0, false); err != nil {
@@ -33,8 +32,10 @@ func main() {
 		log.Fatal("Consume:", err)
 	}
 	for d := range msgs {
-
+		
 		var msg models.VerificationMessage
+
+		log.Println("msg received →", msgs)
 
 		if err := json.Unmarshal(d.Body, &msg); err != nil {
 			log.Println(err)
@@ -42,7 +43,7 @@ func main() {
 			continue
 		}
 
-		if err := email.SendEmail(msg.Email, msg.Code, msg.Subject, msg.HTML); err != nil {
+		if err := email.SendEmail(msg.Email); err != nil {
 			log.Println(err)
 			d.Nack(false, true)
 			continue

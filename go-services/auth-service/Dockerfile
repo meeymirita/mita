@@ -1,5 +1,5 @@
 # https://pkg.go.dev/github.com/air-verse/air#section-readme
-FROM dockerhub.timeweb.cloud/library/golang:1.25-alpine
+FROM golang:1.25-alpine
 WORKDIR /app
 # Установка air в PATH
 RUN go install github.com/air-verse/air@latest

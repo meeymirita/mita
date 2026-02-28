@@ -18,24 +18,15 @@ class VerificationService
      */
     public function sendVerificationCode(User $user): bool
     {
-        // генерация кода
-        $code = $user->generateVerificationCode();
-
         try {
-            app(SendUserCodeRabbitPublisher::class)->sendVerification($user, $code);
-            \Log::info('code sent', ['user_id' => $user->id]);
+            app(SendUserCodeRabbitPublisher::class)->sendVerification($user);
+            \Log::info('code sent', ['user' => $user]);
             return true;
         } catch (\Exception $exception) {
             \Log::error('Failed to send verification code', [
                 'user_id' => $user->id,
                 'error' => $exception->getMessage()
             ]);
-
-            $user->update([
-                'verification_code' => null,
-                'verification_code_expires_at' => null,
-            ]);
-
             return false;
         }
 

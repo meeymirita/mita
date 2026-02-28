@@ -26,9 +26,6 @@ return new class extends Migration
             // User $casts
             $table->timestamp('email_verified_at')->nullable();
 
-            $table->string('verification_code')->nullable();
-            $table->timestamp('verification_code_expires_at')->nullable();
-
             // User $casts
             $table->string('password');
             $table->rememberToken();

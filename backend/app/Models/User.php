@@ -72,19 +72,11 @@ class User extends Authenticatable implements HasMedia
     */
 
     /**
-     * Генерация кода подтверждения
+     * Генерация кода подтверждения перенесена в GO 
      * @return string
      * @throws RandomException
      */
-    public function generateVerificationCode(): string
-    {
-        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $this->update([
-            'verification_code' => Hash::make($code),
-            'verification_code_expires_at' => now()->addMinutes(5), // 5 минут
-        ]);
-        return $code;
-    }
+
     /**
      * Проверка кода подтверждения
      * @param string $code

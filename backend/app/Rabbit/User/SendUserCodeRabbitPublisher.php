@@ -9,13 +9,6 @@ use App\Services\RabbitMQ\RabbitMQConnection;
 class SendUserCodeRabbitPublisher
 {
 
-    // url изображений для email
-    private $sakuraUrl;
-    // url изображений для email
-    private $himaryUrl;
-    // url frontend
-    private $frontendUrl;
-
     public $rabbitMQConnection;
     
     public function __construct(
@@ -23,13 +16,10 @@ class SendUserCodeRabbitPublisher
     )
     {
         $this->rabbitMQConnection = $rabbitMQConnection;
-        $this->sakuraUrl = config('mail.verification.sakura_url');
-        $this->himaryUrl = config('mail.verification.himary_url');
-        $this->frontendUrl = config('app.url');
     }
 
 
-    public function sendVerification($user, $code)
+    public function sendVerification($user)
     {
         $queueName = config('rabbitmq.queues.email', 'emails_queue');
 
@@ -39,18 +29,10 @@ class SendUserCodeRabbitPublisher
             $channel = $connection->channel();
             $channel->queue_declare($queueName, false, true, false, false);
             
-            $html = View::make('emails.verification', [
-                'code' => $code,
-                'sakura_url' => $this->frontendUrl . $this->sakuraUrl,
-                'himary_url' => $this->frontendUrl . $this->himaryUrl,
-                'frontend_url' => rtrim($this->frontendUrl, '/'),
-            ])->render();
             $payload = json_encode([
                 'email' => $user->email,
-                'code' => $code,
                 'user_id' => $user->id,
-                'subject' => 'Код подтверждения',
-                'html' => $html,
+                'type' => 'email_verification',
             ]);
 
             $channel->basic_publish(new AMQPMessage($payload), '', $queueName);
