@@ -20,10 +20,10 @@ class VerifyEmailController extends Controller
     public function verify(Request $request): JsonResponse
     {
         $request->validate([
-            'user_id' => 'required|integer|exists:users,id',
+            'email' => 'required|email|exists:users,email',
             'user_code' => 'required|string|size:6'
         ]);
-        $user = User::query()->where('id', $request->get('user_id'))->first();
+        $user = User::query()->where('email', $request->get('email'))->first();
         $is_verified = $this->verificationService->verifyCode(user: $user, user_code: $request->get('user_code'));
         if ($is_verified) {
             return response()->json([

@@ -4,15 +4,10 @@ namespace App\Services\User;
 
 use App\Models\User;
 use App\Rabbit\User\SendUserCodeRabbitPublisher;
-use Carbon\Carbon;
 use Random\RandomException;
 use Illuminate\Support\Facades\Redis;
 class VerificationService
 {
-
-    private const CODE_LIFETIME_MINUTES = 1;
-    private const RESEND_TIMEOUT_MINUTES = 1;
-
     /**
      * @throws RandomException
      */
@@ -28,8 +23,6 @@ class VerificationService
             ]);
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -39,26 +32,16 @@ class VerificationService
      */
     public function resendVerificationCode(User $user): bool
     {
-        if (!$user->verification_code_expires_at) {
-            return $this->sendVerificationCode($user);
-        }
+        $ttl = Redis::connection('verification')->ttl('verification_code:' . $user->id);
 
-        $codeSentAt = Carbon::parse($user->verification_code_expires_at)
-            ->subMinutes(self::CODE_LIFETIME_MINUTES);
-
-        // Время когда можно отправить повторно (время отправки + 1 минута)
-
-        $canResendAt = $codeSentAt->addMinutes(self::RESEND_TIMEOUT_MINUTES);
-
-        // Если сейчас время меньше времени повторной отправки
-        if (now()->lessThan($canResendAt)) {
-            $secondsLeft = now()->diffInSeconds($canResendAt);
+        if ($ttl > 0) {
+            $secondsLeft = $ttl;
             $minutesLeft = ceil($secondsLeft / 60);
 
-            throw new \Exception('Повторный код можно запросить через ' . $minutesLeft . ' минут(ы)');
+            throw new \Exception('Повторный код можно запросить через ' . $minutesLeft . ' секунд(ы)');
+        } else {
+            return $this->sendVerificationCode($user);
         }
-
-        return $this->sendVerificationCode($user);
     }
 
     public function verifyCode(User $user, string $user_code): bool

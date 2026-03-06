@@ -3,11 +3,11 @@ package main
 import (
 	"crypto/rand"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
+	"fmt"
 	"time"
-	"auth-service/internal/email"
+	 email "auth-service/internal/email"
 	"auth-service/internal/models"
 	"auth-service/internal/queue"
 	"auth-service/internal/redis"
@@ -49,22 +49,13 @@ func main() {
   
 		// Generate code
 		code := EncodeToString(6)
+		key:=fmt.Sprintf("verification_code:%d", msg.UserID)
 
-		key := "verification_code:" + fmt.Sprintf("%d", msg.UserID)
 		if err := redis.Set(redisClient, key, code, 1*time.Minute); err != nil {
 			log.Fatal("Redis Set:", err)
 		}
-		val, err := redis.Get(redisClient, key)
-		if err != nil {
-			log.Fatal("Redis Get:", err)
-		}
-		log.Println("Redis get →", val)
 
-		if err := email.SendEmail(msg.Email); err != nil {
-			log.Println(err)
-			d.Nack(false, true)
-			continue 
-		}
+		email.SendVerificationCodeToEmail(msg.Email, code)
 
 		d.Ack(false)
 

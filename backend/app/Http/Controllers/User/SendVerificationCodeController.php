@@ -49,7 +49,6 @@ class SendVerificationCodeController extends Controller
     public function resendCode(Request $request) : JsonResponse
     {
         $user = $this->validateUserEmail($request);
-
         try {
             $this->verificationService->resendVerificationCode($user);
 
