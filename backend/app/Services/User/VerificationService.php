@@ -32,16 +32,24 @@ class VerificationService
      */
     public function resendVerificationCode(User $user): bool
     {
-        $ttl = Redis::connection('verification')->ttl('verification_code:' . $user->id);
+       if ($user->hasVerifiedEmail()) {
+           throw new \Exception('Email уже подтверждён');
+       }
 
-        if ($ttl > 0) {
-            $secondsLeft = $ttl;
-            $minutesLeft = ceil($secondsLeft / 60);
+       $key = 'verification_code:' . $user->id;
+       $redis = Redis::connection('verification');
 
-            throw new \Exception('Повторный код можно запросить через ' . $minutesLeft . ' секунд(ы)');
-        } else {
-            return $this->sendVerificationCode($user);
-        }
+       $ttl = $redis->ttl($key);
+
+       if ($ttl > 0) {
+           $secondsLeft = $ttl;
+       
+           throw new \Exception(
+               message: 'Повторный код можно запросить через ' . $secondsLeft . ' секунд(ы)'
+           );
+       }
+
+       return $this->sendVerificationCode(user: $user);
     }
 
     public function verifyCode(User $user, string $user_code): bool

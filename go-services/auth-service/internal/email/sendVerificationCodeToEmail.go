@@ -40,8 +40,9 @@ func SendVerificationCodeToEmail(email string, code string) {
 	}
 	fmt.Println("Email sent to", email)
 }
+// парсинг файлика и подстановка переменных в него 
 func buildHTML(email string, code string) string {
-	// Данные для подстановки в HTML шаблон
+	
 	EmailDataMap := map[string]string{
 		"frontend_url": "https://meeymirita.ru/",
 		"sakura_url": "http://localhost:8080/storage/images/image_to_email/sakura.png",

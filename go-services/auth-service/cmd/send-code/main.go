@@ -47,7 +47,6 @@ func main() {
 			continue
 		}
   
-		// Generate code
 		code := EncodeToString(6)
 		key:=fmt.Sprintf("verification_code:%d", msg.UserID)
 

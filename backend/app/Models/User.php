@@ -105,9 +105,10 @@ class User extends Authenticatable implements HasMedia
      * Проверка подтвержден ли email
      * @return bool
      */
+
     public function hasVerifiedEmail(): bool
     {
-        return !is_null($this->email_verified_at);
+        return $this->email_verified_at !== null;
     }
     /**
     * https://timeweb.cloud/tutorials/cloud/ispolzovanie-laravel-s-s3-i-spatie-medialibrary
